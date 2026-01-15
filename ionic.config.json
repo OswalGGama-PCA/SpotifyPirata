@@ -1,0 +1,7 @@
+{
+  "name": "SpotifyPirata",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
