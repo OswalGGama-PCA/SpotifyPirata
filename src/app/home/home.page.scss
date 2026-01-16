@@ -1,24 +1,357 @@
-.slide-content {
-  text-align: center;
-  padding: 10px;
-}
-
-.slide-content img {
-  width: 100%;
-  max-width: 300px;
-  height: auto;
+ion-progress-bar {
+  --background: rgba(255, 255, 255, 0.2);
+  --progress-background: var(--slide-button-background);
+  height: 4px;
   border-radius: 10px;
-  margin: 10% 0;
+  width: 80%;
+  max-width: 300px;
+  margin: 0 auto 12px;
+  display: block;
 }
 
-.slide-content h2 {
-  font-size: 25px;
-  margin: 0;
-  color: #c50505;
+ion-content {
+  --background: var(--slide-background);
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.slide-content p {
-  font-size: 20px;
-  color: #ffffff;
-  text-align: justify;
+// Header Section
+.header-section {
+  text-align: center;
+  padding: 16px 16px 12px;
+  animation: fadeInDown 0.6s ease-out;
+
+  .main-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--slide-text-color);
+    margin: 0;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--slide-text-color), var(--slide-button-background));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    @media (min-width: 375px) {
+      font-size: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: var(--slide-secondary-text);
+    margin-top: 6px;
+    font-weight: 400;
+    opacity: 0.8;
+
+    @media (min-width: 768px) {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Swiper Container
+.artist-swiper {
+  padding: 12px 0 100px;
+  --swiper-pagination-color: var(--slide-button-background);
+  --swiper-pagination-progressbar-bg-color: rgba(255, 255, 255, 0.2);
+  --swiper-pagination-bottom: 15px;
+  
+  ::part(pagination) {
+    height: 4px;
+    border-radius: 10px;
+    overflow: hidden;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 300px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  @media (min-width: 768px) {
+    padding: 20px 0 100px;
+    
+    ::part(pagination) {
+      height: 5px;
+      max-width: 400px;
+    }
+  }
+}
+
+// Artist Card
+.artist-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0 10px;
+  animation: slideUp 0.6s ease-out;
+  max-width: 100%;
+
+  @media (min-width: 768px) {
+    border-radius: 24px;
+    margin: 0 15px;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 
+        0 16px 48px rgba(0, 0, 0, 0.3),
+        0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// Image Container
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+
+  @media (min-width: 375px) {
+    height: 240px;
+  }
+
+  @media (min-width: 414px) {
+    height: 280px;
+  }
+
+  @media (min-width: 768px) {
+    height: 320px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    &:hover img {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// Card Content
+.card-content {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+
+  @media (min-width: 375px) {
+    padding: 18px;
+  }
+
+  @media (min-width: 768px) {
+    padding: 24px;
+  }
+
+  .artist-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--slide-text-color);
+    margin: 0 0 10px;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+
+    @media (min-width: 375px) {
+      font-size: 1.5rem;
+    }
+
+    @media (min-width: 414px) {
+      font-size: 1.65rem;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 1.8rem;
+      margin: 0 0 12px;
+    }
+  }
+
+  .genre-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    background: var(--slide-button-background);
+    color: var(--slide-button-text-color);
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    @media (min-width: 375px) {
+      padding: 6px 14px;
+      font-size: 0.8rem;
+    }
+
+    @media (min-width: 768px) {
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      border-radius: 20px;
+    }
+  }
+
+  .artist-description {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--slide-secondary-text);
+    margin: 0 0 12px;
+    opacity: 0.9;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    @media (min-width: 375px) {
+      font-size: 0.9rem;
+      -webkit-line-clamp: 5;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0 0 16px;
+      -webkit-line-clamp: 6;
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    @media (min-width: 768px) {
+      gap: 12px;
+      padding-top: 12px;
+    }
+
+    .country-tag {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      color: var(--slide-secondary-text);
+      opacity: 0.8;
+
+      @media (min-width: 768px) {
+        gap: 6px;
+        font-size: 0.9rem;
+      }
+
+      ion-icon {
+        font-size: 1rem;
+
+        @media (min-width: 768px) {
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+}
+
+// Theme Button
+ion-fab-button.theme-button {
+  --background: var(--slide-button-background);
+  --color: var(--slide-button-text-color);
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  width: 56px;
+  height: 56px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 16px;
+
+  @media (min-width: 768px) {
+    width: 64px;
+    height: 64px;
+  }
+
+  &::part(native) {
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+  }
+
+  ion-icon {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+
+    @media (min-width: 768px) {
+      font-size: 28px;
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.1) rotate(180deg);
+      --box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Animations
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Loading State
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  
+  ion-spinner {
+    --color: var(--slide-button-background);
+    transform: scale(1.5);
+  }
 }

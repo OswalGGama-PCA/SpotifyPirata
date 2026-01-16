@@ -1,2 +1,54 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+:root {
+  --ion-color-primary: #6a1b9a;
+  --ion-color-primary-rgb: 106, 27, 154;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #5d1788;
+  --ion-color-primary-tint: #7931a5;
+}
+
+// Tema Claro (por defecto)
+body,
+body.light-theme {
+  --slide-background: #f0f2f5;
+  --slide-text-color: #333333;
+  --slide-secondary-text: #666666;
+  --slide-button-background: #6a1b9a;
+  --slide-button-text-color: #ffffff;
+}
+
+// Tema Oscuro
+body.dark-theme {
+  --slide-background: #121212;
+  --slide-text-color: #ffffff;
+  --slide-secondary-text: #cccccc;
+  --slide-button-background: #bb86fc;
+  --slide-button-text-color: #000000;
+}
+
+// Tema Ocean (Azul)
+body.ocean-theme {
+  --slide-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --slide-text-color: #ffffff;
+  --slide-secondary-text: #e0e0e0;
+  --slide-button-background: #4facfe;
+  --slide-button-text-color: #ffffff;
+}
+
+// Tema Sunset (Atardecer)
+body.sunset-theme {
+  --slide-background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --slide-text-color: #ffffff;
+  --slide-secondary-text: #ffe0e0;
+  --slide-button-background: #ff6b6b;
+  --slide-button-text-color: #ffffff;
+}
+
+// Tema Forest (Bosque)
+body.forest-theme {
+  --slide-background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+  --slide-text-color: #ffffff;
+  --slide-secondary-text: #d0f0e0;
+  --slide-button-background: #2ecc71;
+  --slide-button-text-color: #ffffff;
+}

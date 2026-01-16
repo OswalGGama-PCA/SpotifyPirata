@@ -1,21 +1,43 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Home
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <swiper-container pagination="true" loop="true" slides-per-view="1">
-    <swiper-slide *ngFor="let genre of genres">
-      <div class="slide-content"> 
-        <h2>{{genre.title}}</h2>
-        <img [src]="genre.img" [alt]="genre.title">
-        <p>{{genre.description}}</p>
+  <div class="header-section">
+    <h1 class="main-title">Artistas Destacados</h1>
+    <p class="subtitle">Descubre la mejor música</p>
+  </div>
+
+  <ion-progress-bar [value]="progress"></ion-progress-bar>
+
+  <swiper-container
+    loop="true" 
+    [slidesPerView]="1" 
+    [spaceBetween]="20" 
+    [effect]="'cards'"
+    [grabCursor]="true"
+    class="artist-swiper"
+    (realindexchange)="onSlideChange($event)">
+    <swiper-slide *ngFor="let artist of artists">
+      <div class="artist-card">
+        <div class="image-container">
+          <img [src]="artist.img" [alt]="artist.title">
+          <div class="image-overlay"></div>
+        </div>
+        <div class="card-content">
+          <h2 class="artist-name">{{ artist.title }}</h2>
+          <div class="genre-badge">{{ artist.genre }}</div>
+          <p class="artist-description">{{ artist.description }}</p>
+          <div class="card-footer">
+            <span class="country-tag" *ngIf="artist.country">
+              <ion-icon name="location-outline"></ion-icon>
+              {{ artist.country }}
+            </span>
+          </div>
+        </div>
       </div>
     </swiper-slide>
-    <swiper-slide>Slide 2</swiper-slide>
-    <swiper-slide>Slide 3</swiper-slide>
   </swiper-container>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="cambiarColor()" class="theme-button">
+      <ion-icon name="color-palette"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
