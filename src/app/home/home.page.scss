@@ -227,12 +227,14 @@ ion-content {
     opacity: 0.9;
     display: -webkit-box;
     -webkit-line-clamp: 4;
+    line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
 
     @media (min-width: 375px) {
       font-size: 0.9rem;
       -webkit-line-clamp: 5;
+      line-clamp: 5;
     }
 
     @media (min-width: 768px) {
@@ -240,6 +242,7 @@ ion-content {
       line-height: 1.6;
       margin: 0 0 16px;
       -webkit-line-clamp: 6;
+      line-clamp: 6;
     }
   }
 
