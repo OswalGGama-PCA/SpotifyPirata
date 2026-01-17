@@ -2,6 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonFab, IonFabButton, IonIcon, IonProgressBar } from '@ionic/angular/standalone';
 import { HttpClient } from '@angular/common/http';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -20,10 +21,19 @@ export class HomePage implements OnInit {
   artists: any[] = [];
   isLoading = true;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private storageService: StorageService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.restoreTheme();
     this.loadArtists();
+  }
+
+  private async restoreTheme() {
+    const saved = await this.storageService.get<string>('theme');
+    if (saved && this.themes.includes(saved)) {
+      this.currentTheme = saved;
+    }
+    document.body.classList.add(`${this.currentTheme}-theme`);
   }
 
   loadArtists() {
@@ -67,7 +77,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  cambiarColor() {
+  async cambiarColor() {
     const currentIndex = this.themes.indexOf(this.currentTheme);
     const nextIndex = (currentIndex + 1) % this.themes.length;
     
@@ -77,5 +87,7 @@ export class HomePage implements OnInit {
     // Aplicar nuevo tema
     this.currentTheme = this.themes[nextIndex];
     document.body.classList.add(`${this.currentTheme}-theme`);
+
+    await this.storageService.set('theme', this.currentTheme);
   }
 }
