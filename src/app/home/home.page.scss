@@ -32,6 +32,15 @@ ion-content {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    transition: text-shadow 0.4s ease;
+
+    // Efecto pirata: sombra roja agresiva
+    body.pirate-theme & {
+      text-shadow: 
+        0 0 10px rgba(204, 0, 0, 0.8),
+        0 0 20px rgba(255, 215, 0, 0.3);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+    }
 
     @media (min-width: 375px) {
       font-size: 2rem;
@@ -94,6 +103,12 @@ ion-content {
       font-weight: 600;
       letter-spacing: 0.5px;
     }
+  }
+
+  .pirate-decoration {
+    font-size: 2rem;
+    animation: float 3s ease-in-out infinite;
+    margin: 8px 0;
   }
 }
 
@@ -397,6 +412,13 @@ ion-fab-button.theme-button {
       transform: rotate(360deg) scale(1.2);
     }
   }
+
+  // Efecto pirata mejorado al hacer clic
+  body.pirate-theme &:active {
+    animation: 
+      pulseClick 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+      pirateFlash 0.4s ease-out;
+  }
 }
 
 // Animations
@@ -442,6 +464,30 @@ ion-fab-button.theme-button {
   }
   100% {
     box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb), 0);
+  }
+}
+
+@keyframes pirateFlash {
+  0% {
+    filter: brightness(1);
+    text-shadow: 0 0 0 rgba(204, 0, 0, 0);
+  }
+  50% {
+    filter: brightness(1.8);
+    text-shadow: 0 0 30px rgba(204, 0, 0, 0.9);
+  }
+  100% {
+    filter: brightness(1);
+    text-shadow: 0 0 0 rgba(204, 0, 0, 0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-10px); 
   }
 }
 

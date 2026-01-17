@@ -1,7 +1,9 @@
 {
   "name": "SpotifyPirata",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
+  "integrations": {},
+  "type": "angular",
+  "devServer": {
+    "host": "0.0.0.0",
+    "port": 8101
+  }
 }

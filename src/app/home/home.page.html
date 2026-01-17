@@ -1,7 +1,22 @@
 <ion-content>
   <div class="header-section">
-    <h1 class="main-title">Artistas Destacados</h1>
-    <p class="subtitle">Descubre la mejor música</p>
+    <div class="pirate-decoration" *ngIf="currentTheme === 'pirate'">☠️</div>
+    <h1 class="main-title">
+      {{ currentTheme === 'pirate' ? 'MÚSICA PIRATA' : 'Artistas Destacados' }}
+    </h1>
+    <p class="subtitle">
+      {{ currentTheme === 'pirate' ? 'Saquea los mejores hits' : 'Descubre la mejor música' }}
+    </p>
+    <div class="pirate-decoration" *ngIf="currentTheme === 'pirate'">☠️</div>
+    <div class="storage-demo">
+      <ion-icon [name]="currentTheme === 'pirate' ? 'skull' : 'save-outline'"></ion-icon>
+      <span>
+        Tema guardado: 
+        <strong>
+          {{ currentTheme === 'pirate' ? '☠️ PIRATA' : currentTheme }}
+        </strong>
+      </span>
+    </div>
   </div>
 
   <ion-progress-bar [value]="progress"></ion-progress-bar>

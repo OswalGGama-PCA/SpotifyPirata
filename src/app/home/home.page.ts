@@ -14,7 +14,7 @@ import { StorageService } from '../services/storage.service';
 })
 export class HomePage implements OnInit {
   currentTheme = 'light';
-  themes = ['light', 'dark', 'ocean', 'sunset', 'forest'];
+  themes = ['light', 'dark', 'ocean', 'sunset', 'forest', 'pirate'];
 
   progress = 0;
 

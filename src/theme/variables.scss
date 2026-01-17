@@ -52,3 +52,18 @@ body.forest-theme {
   --slide-button-background: #2ecc71;
   --slide-button-text-color: #ffffff;
 }
+
+// Tema Pirata
+body.pirate-theme {
+  --slide-background: repeating-linear-gradient(
+    45deg,
+    #1a1a2e 0px,
+    #1a1a2e 10px,
+    #0f0f1e 10px,
+    #0f0f1e 20px
+  );
+  --slide-text-color: #ffd700;
+  --slide-secondary-text: #d4af37;
+  --slide-button-background: #cc0000;
+  --slide-button-text-color: #ffd700;
+}
