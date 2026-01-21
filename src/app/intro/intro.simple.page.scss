@@ -1,0 +1,168 @@
+/* Simple responsive styles for Intro */
+:host {
+  --card-radius: 14px;
+}
+
+.intro-shell {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  max-width:720px;
+  margin:0 auto;
+}
+
+
+.main-title { font-size:clamp(1.25rem,4vw,2rem); margin:0; font-weight:700; }
+.subtitle { color:var(--slide-secondary-text); margin-top:4px; font-size:0.95rem; }
+
+.card-wrap {
+  width:100%;
+  max-width:720px;
+  margin: 1rem auto 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:var(--slide-text-color);
+  border-radius:calc(var(--card-radius) + 12px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.12);
+  overflow:hidden;
+  margin-top:20px;
+  transition: transform 0.45s cubic-bezier(0.2,0.9,0.2,1), box-shadow 0.45s;
+}
+
+.card-wrap:hover {
+  transform: translateY(-6px);
+  box-shadow:0 30px 60px rgba(0,0,0,0.16);
+}
+
+.card-image { width:100%; display:flex; align-items:center; justify-content:center; background:transparent; position:relative; overflow:hidden; border-bottom: 1px solid rgba(0,0,0,0.04); }
+.card-image img { width:90%; max-width:680px; height:auto; border-radius:12px; display:block; transform-origin:center; transition: transform 0.9s cubic-bezier(0.2,0.9,0.2,1), opacity 0.6s; }
+.card-image.has-img img { transform: scale(1.02); }
+.img-overlay { position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,0.45), transparent); pointer-events:none; opacity:0.9; transition: opacity 0.6s; }
+
+.card-body { padding:16px; }
+.card-body h2{ margin:0; font-size:1.1rem; text-align:center }
+.card-body p{ margin-top:10px; font-size:0.95rem; text-align:center; color:var(--slide-secondary-text) }
+
+.dots{ display:flex; gap:0.6rem; justify-content:center; }
+.dots button.dot{ width:12px; height:12px; border-radius:6px; background:rgba(0,0,0,0.08); border: none; cursor:pointer; transition: all 0.3s ease; }
+.dots button.dot.active{ width:28px; border-radius:8px; background:var(--slide-button-background); box-shadow:0 6px 18px rgba(0,0,0,0.12); transform: scale(1); }
+
+.controls-row{ display:flex; gap:12px; justify-content:center; margin-top:12px }
+.controls-row ion-button{ --padding-start:12px; --padding-end:12px }
+
+.btn-animated{ transition: transform 0.28s cubic-bezier(0.2,1,0.22,1), box-shadow 0.28s; }
+.btn-animated:hover{ transform: translateY(-4px); box-shadow:0 10px 30px rgba(0,0,0,0.12); }
+.btn-animated:active{ transform: scale(0.98); }
+.btn-animated:focus-visible{ outline:2px solid color-mix(in srgb, var(--slide-button-background), #ffffff 35%); outline-offset:4px; border-radius:8px; }
+
+.actions{ padding:12px 16px 20px }
+.actions ion-button{ border-radius:10px }
+
+.primary-action ion-icon{ margin-left:0.75rem; transition: transform 0.28s; }
+.primary-action:hover ion-icon{ transform: translateX(6px); }
+
+.info-row { color:var(--slide-secondary-text); margin-top:8px }
+
+/* Responsive tweaks */
+@media (max-width:480px){
+  .card-body{ padding:12px }
+  .card-image img{ width:95% }
+  .controls-row{ flex-direction:row; gap:8px }
+  .actions ion-button{ font-size:0.95rem }
+}
+
+/* Simple theme modifiers (if class applied to .card-wrap) */
+.card-wrap.theme-default{ background: var(--slide-background); }
+.card-wrap.theme-dark{ background: #121214; color:#fff }
+.card-wrap.theme-ocean{ background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.06)); }
+.card-wrap.theme-sunset{ background: linear-gradient(135deg, rgba(240,147,251,0.06), rgba(245,87,108,0.04)); }
+
+/* small visual helpers */
+.intro-progress{ margin-bottom:12px }
+
+/* Accessibility helpers */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.dots button.dot:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--slide-button-background), #ffffff 40%);
+  outline-offset: 4px;
+}
+
+
+
+/* Theme FAB positioned bottom-right for easier thumb reach on mobile */
+.theme-fab {
+  --z-index: 1100;
+}
+
+.theme-fab.bottom-right {
+  position: fixed;
+  right: calc(env(safe-area-inset-right, 12px) + 12px);
+  bottom: calc(env(safe-area-inset-bottom, 12px) + 12px);
+}
+
+@media (min-width: 768px) {
+  /* On larger screens prefer a slightly smaller offset and keep it less intrusive */
+  .theme-fab.bottom-right {
+    right: 28px;
+    bottom: 28px;
+  }
+}
+
+.theme-fab ion-fab-button {
+  --background: var(--slide-button-background);
+  --color: var(--slide-button-text-color);
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+  transition: transform 0.22s, box-shadow 0.22s;
+}
+
+.theme-fab ion-fab-button:active {
+  transform: scale(0.95);
+}
+
+.pirate-badge{
+  display:inline-block;
+  font-weight:700;
+  color: #ffd700;
+  background: linear-gradient(90deg, rgba(204,0,0,0.08), rgba(255,215,0,0.04));
+  padding:6px 10px;
+  border-radius:12px;
+  margin-top:8px;
+  box-shadow: 0 8px 30px rgba(204,0,0,0.06);
+  transform-origin:center;
+}
+
+.pirate-badge.flash {
+  animation: pirateFlash 0.9s ease-out;
+}
+
+@keyframes pirateFlash {
+  0% { transform: scale(0.95) rotate(-4deg); filter: brightness(1); }
+  40% { transform: scale(1.08) rotate(4deg); filter: brightness(1.8); }
+  100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-wrap,
+  .card-image img,
+  .btn-animated,
+  .dots button.dot,
+  .primary-action ion-icon,
+  .floating-indicators .floating-dot,
+  .pirate-badge {
+    transition: none !important;
+    animation: none !important;
+  }
+}

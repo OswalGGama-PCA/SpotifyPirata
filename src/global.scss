@@ -35,3 +35,12 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* Small toast style for theme feedback */
+.theme-toast {
+  --background: rgba(0,0,0,0.85);
+  --color: #fff;
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-weight: 600;
+}

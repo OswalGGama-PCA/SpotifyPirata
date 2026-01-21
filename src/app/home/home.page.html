@@ -1,5 +1,8 @@
 <ion-content>
   <div class="header-section">
+    <div style="position: absolute; left: 12px; top: 12px;">
+      <ion-button size="small" fill="clear" (click)="goIntro()">Intro</ion-button>
+    </div>
     <div class="pirate-decoration" *ngIf="currentTheme === 'pirate'">☠️</div>
     <h1 class="main-title">
       {{ currentTheme === 'pirate' ? 'MÚSICA PIRATA' : 'Artistas Destacados' }}
@@ -7,9 +10,9 @@
     <p class="subtitle">
       {{ currentTheme === 'pirate' ? 'Saquea los mejores hits' : 'Descubre la mejor música' }}
     </p>
-    <div class="pirate-decoration" *ngIf="currentTheme === 'pirate'">☠️</div>
     <div class="storage-demo">
-      <ion-icon [name]="currentTheme === 'pirate' ? 'skull' : 'save-outline'"></ion-icon>
+      <span *ngIf="currentTheme === 'pirate'" class="pirate-emoji">☠️</span>
+      <ion-icon *ngIf="currentTheme !== 'pirate'" name="save-outline"></ion-icon>
       <span>
         Tema guardado: 
         <strong>
@@ -17,14 +20,20 @@
         </strong>
       </span>
     </div>
+
+    <div class="reload-actions">
+      <ion-button size="small" fill="clear" (click)="reloadArtists()" [disabled]="isLoading">
+        Recargar artistas
+      </ion-button>
+    </div> 
   </div>
 
   <ion-progress-bar [value]="progress"></ion-progress-bar>
 
-  <swiper-container
-    loop="true" 
-    [slidesPerView]="1" 
-    [spaceBetween]="20" 
+  <swiper-container *ngIf="artists.length > 0; else loadingTpl"
+    [loop]="artists.length >= 3"
+    [slidesPerView]="1"
+    [spaceBetween]="20"
     [effect]="'cards'"
     [grabCursor]="true"
     class="artist-swiper"
@@ -49,6 +58,12 @@
       </div>
     </swiper-slide>
   </swiper-container>
+
+  <ng-template #loadingTpl>
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  </ng-template>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="cambiarColor()" class="theme-button">

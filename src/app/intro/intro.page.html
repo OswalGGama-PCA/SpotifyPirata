@@ -1,0 +1,50 @@
+<!-- Header oculto para diseño moderno -->
+<ion-header [translucent]="true" class="ion-hide">
+  <ion-toolbar>
+    <ion-title>Intro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-progress-bar class="intro-progress" [value]="getProgressValue()" role="progressbar" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="(getProgressValue()*100) | number:'1.0-0'"></ion-progress-bar>
+
+  <div class="intro-shell ion-padding">
+    <div class="card-wrap ion-margin-top" [ngClass]="slideTheme" role="region" [attr.aria-label]="slides[currentIndex]?.title">
+      <div class="card-image" [class.has-img]="slides[currentIndex]?.img">
+        <img *ngIf="slides[currentIndex]?.img" [src]="slides[currentIndex].img" [alt]="slides[currentIndex].title" (load)="onImageLoad()">
+        <div class="img-overlay" aria-hidden="true"></div>
+      </div>
+
+      <div class="card-body ion-padding">
+        <h2 class="ion-text-center">{{ slides[currentIndex]?.title }}</h2>
+        <p class="ion-text-center ion-margin-top">{{ slides[currentIndex]?.text }}</p>
+
+        <nav class="dots ion-text-center ion-margin-top" aria-label="Navegación de diapositivas">
+          <button class="dot" *ngFor="let s of slides; let j = index" [class.active]="j === currentIndex" (click)="goToSlide(j)" [attr.aria-label]="'Ir a '+slides[j].title"></button>
+        </nav>
+
+        <div class="controls-row ion-margin-top">
+          <ion-button fill="clear" (click)="prev()" [disabled]="currentIndex===0" class="btn-animated" aria-label="Anterior">Anterior</ion-button>
+          <ion-button fill="clear" (click)="next()" [disabled]="currentIndex===slides.length-1" class="btn-animated" aria-label="Siguiente">Siguiente</ion-button>
+        </div>
+
+        <div class="actions ion-margin-top">
+          <ion-button expand="block" color="primary" (click)="goHome()" class="primary-action btn-animated" aria-label="Comenzar">Comenzar <ion-icon name="arrow-forward-outline" slot="end"></ion-icon></ion-button>
+          <ion-button fill="clear" expand="block" (click)="skipToEnd()" class="ion-margin-top btn-animated" [attr.aria-label]="currentIndex === slides.length -1 ? 'Volver al inicio' : 'Saltar al final'">{{ currentIndex === slides.length -1 ? 'Volver al inicio' : 'Saltar al final' }}</ion-button>
+        </div>
+      </div>
+    </div>    
+
+    <div class="info-row ion-text-center ion-margin-top">
+      <small>Paso {{ currentIndex + 1 }} de {{ slides.length }}</small>
+    </div>
+
+    <div class="visually-hidden" aria-live="polite">{{ announceMessage }}</div>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="theme-fab bottom-right">
+      <ion-fab-button size="small" (click)="toggleTheme()" aria-label="Cambiar tema" title="Cambiar tema">
+        <ion-icon name="color-palette-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </div>
+</ion-content>

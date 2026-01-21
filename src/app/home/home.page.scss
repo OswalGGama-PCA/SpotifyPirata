@@ -105,6 +105,16 @@ ion-content {
     }
   }
 
+  .reload-actions {
+    margin-top: 12px;
+
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      font-weight: 600;
+    }
+  }
+
   .pirate-decoration {
     font-size: 2rem;
     animation: float 3s ease-in-out infinite;
