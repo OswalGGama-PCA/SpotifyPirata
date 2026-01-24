@@ -1,42 +1,33 @@
-<ion-content>
+<ion-content [fullscreen]="true">
+  <!-- Header Section Optimizado -->
   <div class="header-section">
-    <div style="position: absolute; left: 12px; top: 12px;">
-      <ion-button size="small" fill="clear" (click)="goIntro()">Intro</ion-button>
-    </div>
-    <div class="pirate-decoration" *ngIf="currentTheme === 'pirate'">☠️</div>
-    <h1 class="main-title">
-      {{ currentTheme === 'pirate' ? 'MÚSICA PIRATA' : 'Artistas Destacados' }}
-    </h1>
-    <p class="subtitle">
-      {{ currentTheme === 'pirate' ? 'Saquea los mejores hits' : 'Descubre la mejor música' }}
-    </p>
-    <div class="storage-demo">
-      <span *ngIf="currentTheme === 'pirate'" class="pirate-emoji">☠️</span>
-      <ion-icon *ngIf="currentTheme !== 'pirate'" name="save-outline"></ion-icon>
-      <span>
-        Tema guardado: 
-        <strong>
-          {{ currentTheme === 'pirate' ? '☠️ PIRATA' : currentTheme }}
-        </strong>
-      </span>
+    <div class="header-content">
+      <span class="pirate-decoration" *ngIf="currentTheme === 'pirate'">☠️</span>
+      <h1 class="main-title">
+        {{ currentTheme === 'pirate' ? 'MÚSICA PIRATA' : 'Artistas Destacados' }}
+      </h1>
+      <p class="subtitle">
+        {{ currentTheme === 'pirate' ? 'Saquea los mejores hits del océano' : 'Descubre la mejor música para tus oídos'
+        }}
+      </p>
     </div>
 
-    <div class="reload-actions">
-      <ion-button size="small" fill="clear" (click)="reloadArtists()" [disabled]="isLoading">
-        Recargar artistas
+    <div class="header-actions">
+      <ion-button class="reload-btn" size="small" fill="outline" (click)="reloadArtists()" [disabled]="isLoading">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Recargar Artistas
       </ion-button>
-    </div> 
+    </div>
   </div>
 
-  <ion-progress-bar [value]="progress"></ion-progress-bar>
+  <!-- Indicador de Progreso -->
+  <div class="progress-container">
+    <ion-progress-bar [value]="progress"></ion-progress-bar>
+  </div>
 
-  <swiper-container *ngIf="artists.length > 0; else loadingTpl"
-    [loop]="artists.length >= 3"
-    [slidesPerView]="1"
-    [spaceBetween]="20"
-    [effect]="'cards'"
-    [grabCursor]="true"
-    class="artist-swiper"
+  <!-- Contenido Principal con Swiper -->
+  <swiper-container *ngIf="artists.length > 0; else skeletonTpl" [loop]="artists.length >= 3" [slidesPerView]="1"
+    [spaceBetween]="0" [effect]="'cards'" [grabCursor]="true" class="artist-swiper"
     (realindexchange)="onSlideChange($event)">
     <swiper-slide *ngFor="let artist of artists">
       <div class="artist-card">
@@ -59,15 +50,19 @@
     </swiper-slide>
   </swiper-container>
 
-  <ng-template #loadingTpl>
-    <div class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
+  <!-- Skeleton Loading Profesional -->
+  <ng-template #skeletonTpl>
+    <div class="skeleton-container">
+      <div class="skeleton-card" *ngFor="let item of [1,2]">
+        <ion-skeleton-text animated class="skeleton-image" style="height: 240px;"></ion-skeleton-text>
+        <div class="skeleton-content">
+          <ion-skeleton-text animated style="width: 70%; height: 24px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 30%; height: 20px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+        </div>
+      </div>
     </div>
   </ng-template>
-
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="cambiarColor()" class="theme-button">
-      <ion-icon name="color-palette"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>

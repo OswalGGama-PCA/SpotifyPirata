@@ -1,0 +1,101 @@
+<ion-content [fullscreen]="true">
+  <div class="register-container">
+    <!-- Header -->
+    <header class="register-header">
+      <div class="logo-wrapper">
+        <div class="pirate-logo">☠️</div>
+        <ion-icon name="musical-notes" class="music-icon"></ion-icon>
+      </div>
+      <h1 class="brand-title">Únete a la Tripulación</h1>
+      <p class="brand-subtitle">Crea tu cuenta y navega por el mundo de la música</p>
+    </header>
+
+    <!-- Register Form -->
+    <form class="register-form" [formGroup]="registerForm" (ngSubmit)="register()">
+
+      <!-- Nombre Field -->
+      <div class="form-field">
+        <ion-item lines="none" class="input-wrapper"
+          [class.has-error]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-input type="text" label="Nombre" labelPlacement="floating" placeholder="Tu nombre"
+            formControlName="nombre" autocomplete="given-name">
+          </ion-input>
+        </ion-item>
+        <div class="field-error" *ngIf="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
+          <small *ngIf="registerForm.get('nombre')?.errors?.['required']">El nombre es obligatorio</small>
+          <small *ngIf="registerForm.get('nombre')?.errors?.['minlength']">Mínimo 2 caracteres</small>
+        </div>
+      </div>
+
+      <!-- Apellido Field -->
+      <div class="form-field">
+        <ion-item lines="none" class="input-wrapper"
+          [class.has-error]="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-input type="text" label="Apellido" labelPlacement="floating" placeholder="Tu apellido"
+            formControlName="apellido" autocomplete="family-name">
+          </ion-input>
+        </ion-item>
+        <div class="field-error" *ngIf="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched">
+          <small *ngIf="registerForm.get('apellido')?.errors?.['required']">El apellido es obligatorio</small>
+          <small *ngIf="registerForm.get('apellido')?.errors?.['minlength']">Mínimo 2 caracteres</small>
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-field">
+        <ion-item lines="none" class="input-wrapper"
+          [class.has-error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-input type="email" label="Correo electrónico" labelPlacement="floating" placeholder="tu@email.com"
+            formControlName="email" autocomplete="email">
+          </ion-input>
+        </ion-item>
+        <div class="field-error" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+          <small *ngIf="registerForm.get('email')?.errors?.['required']">El correo es obligatorio</small>
+          <small *ngIf="registerForm.get('email')?.errors?.['email']">Ingresa un correo válido</small>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-field">
+        <ion-item lines="none" class="input-wrapper"
+          [class.has-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input type="password" label="Contraseña" labelPlacement="floating" placeholder="Mínimo 8 caracteres"
+            formControlName="password" autocomplete="new-password">
+            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
+        </ion-item>
+        <div class="field-error" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+          <small *ngIf="registerForm.get('password')?.errors?.['required']">La contraseña es obligatoria</small>
+          <small *ngIf="registerForm.get('password')?.errors?.['minlength']">Mínimo 8 caracteres para mayor
+            seguridad</small>
+        </div>
+        <!-- Password Strength Indicator -->
+        <div class="password-strength" *ngIf="registerForm.get('password')?.value">
+          <div class="strength-bar" [class]="getPasswordStrength()"></div>
+          <small class="strength-text">{{ getPasswordStrengthText() }}</small>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <ion-button type="submit" expand="block" class="btn-primary" [disabled]="registerForm.invalid || isLoading">
+        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+        <span *ngIf="!isLoading">Crear Cuenta</span>
+      </ion-button>
+    </form>
+
+
+    <!-- Footer -->
+    <footer class="register-footer">
+      <p>
+        ¿Ya tienes cuenta?
+        <ion-button fill="clear" size="small" class="link-button" (click)="goToLogin()">
+          Inicia Sesión
+        </ion-button>
+      </p>
+    </footer>
+  </div>
+</ion-content>

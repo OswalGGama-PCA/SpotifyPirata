@@ -1,0 +1,240 @@
+// ============================================
+// MENU PAGE STYLES - SPOTIFY PIRATA
+// ============================================
+
+// Variables
+:host {
+    --menu-background: #000000;
+    --menu-text-color: #b3b3b3;
+    --menu-text-active: #ffffff;
+    --menu-item-hover: #282828;
+    --menu-border-color: #282828;
+}
+
+// ============================================
+// SPLIT PANE
+// ============================================
+
+ion-split-pane {
+    --side-width: 280px;
+    --side-min-width: 280px;
+    --side-max-width: 320px;
+}
+
+// ============================================
+// HEADER TOOLBAR
+// ============================================
+
+.ion-page {
+    background: var(--slide-background, #121212);
+
+    ion-header {
+        ion-toolbar {
+            --background: var(--slide-button-background, var(--ion-color-primary, #1db954));
+            --color: var(--slide-button-text-color, #ffffff);
+            --border-width: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            transition: --background 0.5s ease, --color 0.5s ease;
+
+            ion-title {
+                font-weight: 800;
+                font-size: 1.25rem;
+                letter-spacing: -0.5px;
+                text-transform: uppercase;
+            }
+
+            // Botones de navegación
+            ion-buttons {
+                ion-button {
+                    --color: rgba(255, 255, 255, 0.7);
+                    --background-hover: rgba(255, 255, 255, 0.1);
+                    --border-radius: 8px;
+                    margin: 0 4px;
+                    transition: all 0.2s ease;
+
+                    ion-icon {
+                        font-size: 1.5rem;
+                    }
+
+                    // Estado activo
+                    &.active-nav {
+                        --color: #ffffff;
+                        --background: rgba(255, 255, 255, 0.15);
+                        font-weight: 700;
+                    }
+
+                    &:hover {
+                        --color: #ffffff;
+                    }
+                }
+            }
+
+            // Botón de menú (hamburguesa)
+            ion-menu-button {
+                --color: #ffffff;
+                font-size: 1.5rem;
+            }
+        }
+    }
+}
+
+// ============================================
+// MENU LATERAL
+// ============================================
+
+ion-menu {
+    --background: var(--menu-background);
+    --width: 280px;
+
+    ion-header {
+        ion-toolbar {
+            --background: var(--menu-background);
+            --color: var(--menu-text-active);
+            --border-width: 0;
+            --padding-top: 8px;
+            --padding-bottom: 8px;
+
+            ion-title {
+                font-weight: 800;
+                font-size: 1.5rem;
+                letter-spacing: -0.5px;
+            }
+        }
+    }
+
+    ion-content {
+        --background: var(--menu-background);
+        --padding-start: 0;
+        --padding-end: 0;
+        --padding-top: 0;
+        --padding-bottom: 0;
+    }
+
+    ion-list {
+        background: transparent;
+        padding: 16px 0;
+
+        ion-list-header {
+            padding: 16px 24px 8px;
+
+            ion-label {
+                color: var(--menu-text-active);
+                font-weight: 800;
+                font-size: 0.9rem;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+            }
+        }
+
+        ion-item {
+            --background: transparent;
+            --background-hover: var(--menu-item-hover);
+            --background-activated: var(--menu-item-hover);
+            --color: var(--menu-text-color);
+            --padding-start: 24px;
+            --padding-end: 24px;
+            --min-height: 48px;
+            --border-width: 0;
+            --transition: all 0.2s ease;
+
+            font-weight: 600;
+            cursor: pointer;
+
+            ion-icon {
+                color: var(--menu-text-color);
+                font-size: 1.4rem;
+                margin-inline-end: 16px;
+                transition: color 0.2s ease;
+            }
+
+            ion-label {
+                font-size: 0.95rem;
+                transition: color 0.2s ease;
+            }
+
+            // Hover state
+            &:hover {
+                --background: var(--menu-item-hover);
+
+                ion-icon,
+                ion-label {
+                    color: var(--menu-text-active);
+                }
+            }
+
+            // Divider
+            &.menu-divider {
+                --min-height: 1px;
+                --padding-start: 24px;
+                --padding-end: 24px;
+                margin: 8px 0;
+                pointer-events: none;
+
+                ion-label {
+                    height: 1px;
+                    background: var(--menu-border-color);
+                    margin: 0;
+                }
+            }
+
+            // Logout item
+            &.logout-item {
+                margin-top: 16px;
+
+                ion-icon,
+                ion-label {
+                    color: #ff4444;
+                }
+
+                &:hover {
+                    --background: rgba(255, 68, 68, 0.1);
+
+                    ion-icon,
+                    ion-label {
+                        color: #ff6666;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+// Mobile: Menu overlay
+@media (max-width: 768px) {
+    ion-split-pane {
+        --side-width: 280px;
+    }
+
+    ion-menu {
+        --width: 280px;
+    }
+}
+
+// Tablet/Desktop: Menu siempre visible
+@media (min-width: 769px) {
+    ion-split-pane {
+        --side-width: 280px;
+    }
+
+    ion-menu {
+        --width: 280px;
+    }
+}
+
+// ============================================
+// DARK THEME OVERRIDES
+// ============================================
+
+body.dark-theme {
+    ion-menu {
+        --background: #000000;
+    }
+
+    .ion-page {
+        background: #121212;
+    }
+}

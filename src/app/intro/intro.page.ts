@@ -3,32 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
   IonContent, 
-  IonHeader, 
-  IonTitle, 
-  IonToolbar, 
   IonButton, 
   IonIcon, 
   IonProgressBar,
-  IonFab,
-  IonFabButton,
   AnimationController,
   GestureController
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/storage.service';
+import { AuthService } from '../services/auth.service';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { 
   chevronBackOutline, 
   chevronForwardOutline, 
   arrowForwardOutline,
-  colorPaletteOutline,
-  imageOutline,
-  musicalNotesOutline,
-  searchOutline,
-  sparklesOutline,
-  rocketOutline,
-  globeOutline
+  rocketOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -38,14 +28,9 @@ import {
   standalone: true,
   imports: [
     IonContent, 
-    IonHeader, 
-    IonTitle, 
-    IonToolbar, 
     IonButton,
     IonIcon,
     IonProgressBar,
-    IonFab,
-    IonFabButton,
     CommonModule, 
     FormsModule
   ]
@@ -58,109 +43,39 @@ export class IntroPage implements OnInit, AfterViewInit {
       title: 'Bienvenido',
       subtitle: 'Descubre una experiencia única',
       text: 'Explora todas las características que tenemos preparadas para ti. Una plataforma diseñada para amantes de la música.',
-      img: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='240' viewBox='0 0 400 240'><defs>
-        <linearGradient id='grad1' x1='0%' y1='0%' x2='100%' y2='100%'>
-          <stop offset='0%' stop-color='%23667eea' stop-opacity='0.9'/>
-          <stop offset='100%' stop-color='%23764ba2' stop-opacity='0.9'/>
-        </linearGradient>
-        <filter id='shadow' x='-20%' y='-20%' width='140%' height='140%'>
-          <feDropShadow dx='0' dy='10' stdDeviation='15' flood-color='rgba(102,126,234,0.4)'/>
-        </filter>
-      </defs>
-      <rect width='400' height='240' rx='32' fill='url(%23grad1)' filter='url(%23shadow)'/>
-      <text x='200' y='120' font-size='48' fill='white' text-anchor='middle' dominant-baseline='middle' 
-            font-family='Arial, sans-serif' font-weight='bold' opacity='0.9'>🎵</text>
-      </svg>`,
-      icon: musicalNotesOutline
+
+      img: 'assets/images/intro_1.png'
     },
     {
       title: 'Explora',
       subtitle: 'Encuentra tu música favorita',
       text: 'Navega entre miles de artistas, géneros y playlists cuidadosamente seleccionadas para todos los gustos musicales.',
-      img: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='240' viewBox='0 0 400 240'><defs>
-        <linearGradient id='grad2' x1='0%' y1='0%' x2='100%' y2='100%'>
-          <stop offset='0%' stop-color='%23f093fb' stop-opacity='0.9'/>
-          <stop offset='100%' stop-color='%23f5576c' stop-opacity='0.9'/>
-        </linearGradient>
-        <filter id='shadow2' x='-20%' y='-20%' width='140%' height='140%'>
-          <feDropShadow dx='0' dy='10' stdDeviation='15' flood-color='rgba(245,87,108,0.4)'/>
-        </filter>
-      </defs>
-      <rect width='400' height='240' rx='32' fill='url(%23grad2)' filter='url(%23shadow2)'/>
-      <text x='200' y='120' font-size='48' fill='white' text-anchor='middle' dominant-baseline='middle' 
-            font-family='Arial, sans-serif' font-weight='bold' opacity='0.9'>🔍</text>
-      </svg>`,
-      icon: searchOutline
+
+      img: 'assets/images/intro_2.png'
     },
     {
       title: 'Descubre',
       subtitle: 'Recomendaciones inteligentes',
       text: 'Recibe sugerencias personalizadas diariamente basadas en tus gustos y hábitos de escucha.',
-      img: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='240' viewBox='0 0 400 240'><defs>
-        <linearGradient id='grad3' x1='0%' y1='0%' x2='100%' y2='100%'>
-          <stop offset='0%' stop-color='%230ba360' stop-opacity='0.9'/>
-          <stop offset='100%' stop-color='%233cba92' stop-opacity='0.9'/>
-        </linearGradient>
-        <filter id='shadow3' x='-20%' y='-20%' width='140%' height='140%'>
-          <feDropShadow dx='0' dy='10' stdDeviation='15' flood-color='rgba(59,186,146,0.4)'/>
-        </filter>
-      </defs>
-      <rect width='400' height='240' rx='32' fill='url(%23grad3)' filter='url(%23shadow3)'/>
-      <text x='200' y='120' font-size='48' fill='white' text-anchor='middle' dominant-baseline='middle' 
-            font-family='Arial, sans-serif' font-weight='bold' opacity='0.9'>✨</text>
-      </svg>`,
-      icon: sparklesOutline
+
+      img: 'assets/images/intro_3.png'
     },
     {
       title: 'Listo',
       subtitle: 'Comienza tu experiencia',
       text: 'Todo está configurado. Presiona comenzar y sumérgete en el mundo de la música como nunca antes.',
-      img: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='240' viewBox='0 0 400 240'><defs>
-        <linearGradient id='grad4' x1='0%' y1='0%' x2='100%' y2='100%'>
-          <stop offset='0%' stop-color='%23cc0000' stop-opacity='0.9'/>
-          <stop offset='100%' stop-color='%23ffd700' stop-opacity='0.9'/>
-        </linearGradient>
-        <filter id='shadow4' x='-20%' y='-20%' width='140%' height='140%'>
-          <feDropShadow dx='0' dy='10' stdDeviation='15' flood-color='rgba(204,0,0,0.4)'/>
-        </filter>
-      </defs>
-      <rect width='400' height='240' rx='32' fill='url(%23grad4)' filter='url(%23shadow4)'/>
-      <text x='200' y='120' font-size='48' fill='white' text-anchor='middle' dominant-baseline='middle' 
-            font-family='Arial, sans-serif' font-weight='bold' opacity='0.9'>🚀</text>
-      </svg>`,
-      icon: rocketOutline
+
+      img: 'assets/images/intro_4.png'
     }
   ];
 
   currentIndex = 0;
-  slideTheme = 'theme-default';
   imageLoaded = false;
+  imageError = false;
   isLoading = false;
   isMobile = false;
   prefersReducedMotion = false;
   announceMessage = '';
-
-  // Map slide theme class -> base theme name used across the app and storage
-  private slideToBaseMap: Record<string, string> = {
-    'theme-default': 'light',
-    'theme-dark': 'dark',
-    'theme-ocean': 'ocean',
-    'theme-sunset': 'sunset',
-    'pirate-theme': 'pirate'
-  };
-
-  // List of body theme classes used by global styles
-  private bodyThemeClasses = ['light-theme', 'dark-theme', 'ocean-theme', 'sunset-theme', 'forest-theme', 'pirate-theme'];
-
-  // User friendly labels for themes
-  private themeLabels: Record<string, string> = {
-    light: 'Claro',
-    dark: 'Oscuro',
-    ocean: 'Ocean',
-    sunset: 'Atardecer',
-    forest: 'Bosque',
-    pirate: '☠️ PIRATA'
-  };
 
   private swipeGesture: any;
   private _parallaxHandlers?: { onMove: (e: MouseEvent) => void; onLeave: () => void; el?: any };
@@ -168,6 +83,7 @@ export class IntroPage implements OnInit, AfterViewInit {
   constructor(
     private router: Router, 
     private storageService: StorageService,
+    private authService: AuthService,
     private animationCtrl: AnimationController,
     private gestureCtrl: GestureController,
     private toastController: ToastController
@@ -176,34 +92,19 @@ export class IntroPage implements OnInit, AfterViewInit {
       chevronBackOutline,
       chevronForwardOutline,
       arrowForwardOutline,
-      colorPaletteOutline,
-      imageOutline,
-      musicalNotesOutline,
-      searchOutline,
-      sparklesOutline,
-      rocketOutline,
-      globeOutline
+      rocketOutline
     });
+    
+    // Establecer tema dark (premium) por defecto
+    this.setDarkTheme();
   }
 
-  private async restoreSlideTheme(): Promise<void> {
-    const saved = await this.storageService.get<string>('theme');
-    if (saved && this.bodyThemeClasses.includes(`${saved}-theme`)) {
-      const baseToSlide: Record<string, string> = {
-        light: 'theme-default',
-        dark: 'theme-dark',
-        ocean: 'theme-ocean',
-        sunset: 'theme-sunset',
-        pirate: 'pirate-theme'
-      };
-      this.slideTheme = baseToSlide[saved] || 'theme-default';
-
-      document.body.classList.remove(...this.bodyThemeClasses);
-      document.body.classList.add(`${saved}-theme`);
-    } else {
-      document.body.classList.remove(...this.bodyThemeClasses);
-      document.body.classList.add('light-theme');
-    }
+  /**
+   * Establece el tema dark premium por defecto
+   */
+  private setDarkTheme(): void {
+    document.body.classList.remove('light-theme', 'ocean-theme', 'sunset-theme', 'forest-theme', 'pirate-theme');
+    document.body.classList.add('dark-theme');
   }
 
   async ngOnInit() {
@@ -211,7 +112,38 @@ export class IntroPage implements OnInit, AfterViewInit {
     this.detectSwipeGestures();
     this.prefersReducedMotion = !!(window && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-    await this.restoreSlideTheme();
+    this.preloadImages(); // Precargar imágenes para mejor performance
+  }
+
+  /**
+   * Precarga todas las imágenes de los slides
+   * Mejora la experiencia de usuario al evitar delays en la navegación
+   */
+  private preloadImages(): void {
+    this.slides.forEach(slide => {
+      if (slide.img) {
+        const img = new Image();
+        img.src = slide.img;
+      }
+    });
+  }
+
+  /**
+   * Obtiene un slide de forma segura
+   * @param index - Índice del slide
+   * @returns Slide en el índice especificado o el primero como fallback
+   */
+  getSafeSlide(index: number) {
+    return this.slides[index] || this.slides[0];
+  }
+
+  /**
+   * Verifica si se deben ejecutar animaciones
+   * Respeta las preferencias de accesibilidad del usuario
+   * @returns boolean - true si se deben animar
+   */
+  private shouldAnimate(): boolean {
+    return !this.prefersReducedMotion;
   }
 
   ngAfterViewInit() {
@@ -380,59 +312,11 @@ export class IntroPage implements OnInit, AfterViewInit {
     }
   }
 
-  async toggleTheme() {
-    // Ciclo entre temas con animación
-    const themes = ['theme-default', 'theme-dark', 'theme-ocean', 'theme-sunset', 'pirate-theme'];
-    const currentIdx = themes.indexOf(this.slideTheme);
-    this.slideTheme = themes[(currentIdx + 1) % themes.length];
 
-    // Map slideTheme -> base theme and apply to body
-    const base = this.slideToBaseMap[this.slideTheme] || 'light';
-    document.body.classList.remove(...this.bodyThemeClasses);
-    document.body.classList.add(`${base}-theme`);
-
-    // Save selected base theme for Home and other pages
-    await this.storageService.set('theme', base);
-
-    // Animación del botón de tema
-    const button = document.querySelector('.theme-toggle ion-button');
-    if (button) {
-      const animation = this.animationCtrl.create()
-        .addElement(button)
-        .duration(600)
-        .keyframes([
-          { offset: 0, transform: 'rotate(0deg) scale(1)' },
-          { offset: 0.5, transform: 'rotate(180deg) scale(0.9)' },
-          { offset: 1, transform: 'rotate(360deg) scale(1)' }
-        ]);
-      
-      if (!this.prefersReducedMotion) animation.play();
-    }
-
-    // Pirate badge feedback
-    if (this.slideTheme === 'pirate-theme') {
-      this.announceMessage = 'Tema pirata activado';
-      const badge = document.querySelector('.pirate-badge') as HTMLElement | null;
-      if (badge) {
-        badge.classList.add('flash');
-        setTimeout(() => badge.classList.remove('flash'), 900);
-      }
-      setTimeout(() => this.announceMessage = '', 1400);
-    }
-  }
-
-  private async showThemeToast(base: string) {
-    const label = this.themeLabels[base] || base;
-    const toast = await this.toastController.create({
-      message: `Tema: ${label}`,
-      duration: 1400,
-      position: 'bottom',
-      cssClass: 'theme-toast'
-    });
-
-    await toast.present();
-  }
-
+  /**
+   * Navega al Home y marca la intro como vista
+   * @returns Promise<void>
+   */
   async goHome() {
     this.isLoading = true;
     
@@ -451,22 +335,25 @@ export class IntroPage implements OnInit, AfterViewInit {
       await animation.play();
     }
     
-    // Guardar en storage y navegar
-    const base = this.slideToBaseMap[this.slideTheme] || 'light';
-    await this.storageService.set('introSeen', true);
-    await this.storageService.set('theme', base);
+    // Guardar que vio la intro y navegar (User Specific)
+    const user = this.authService.currentUser;
+    if (user) {
+      const key = `introSeen_${user.id}`;
+      await this.storageService.set(key, true);
+    } else {
+      console.warn('No user found when creating storage key, falling back to global key');
+      await this.storageService.set('introSeen', true);
+    }
 
-    // Mostrar toast con el tema activo antes de navegar
-    await this.showThemeToast(base);
-
-    this.router.navigate(['/home'], {
-      state: { theme: base },
+    // Navegar a /menu/home (la nueva ruta con el layout de menú)
+    this.router.navigate(['/menu/home'], {
       replaceUrl: true
     });
   }
 
   onImageLoad() {
     this.imageLoaded = true;
+    this.imageError = false;
     
     // Animación sutil al cargar la imagen
     const image = this.slidesWrapper?.nativeElement.querySelector('.slide.active img');
@@ -481,19 +368,29 @@ export class IntroPage implements OnInit, AfterViewInit {
     }
   }
 
-  skipToEnd() {
-    // Si estamos en el último slide, volver al inicio; si no, saltar al final.
+  /**
+   * Maneja errores de carga de imágenes
+   * Muestra un placeholder o ícono de respaldo
+   */
+  onImageError() {
+    this.imageError = true;
+    this.imageLoaded = false;
+    console.warn(`Error loading image for slide: ${this.slides[this.currentIndex]?.title}`);
+  }
+
+  async skipToEnd() {
+    // Si estamos en el último slide, ir a home
     if (this.currentIndex === this.slides.length - 1) {
-      this.currentIndex = 0;
+      await this.goHome();
     } else {
+      // Si no, saltar al último slide
       this.currentIndex = this.slides.length - 1;
+      this.playEntranceAnimation();
+      
+      // Accesibilidad: anunciar y mover el foco al indicador correspondiente
+      this.announceSlide();
+      setTimeout(() => this.focusDot(this.currentIndex), 80);
     }
-
-    this.playEntranceAnimation();
-
-    // Accesibilidad: anunciar y mover el foco al indicador correspondiente
-    this.announceSlide();
-    setTimeout(() => this.focusDot(this.currentIndex), 80);
   }
 
   goToSlide(index: number) {

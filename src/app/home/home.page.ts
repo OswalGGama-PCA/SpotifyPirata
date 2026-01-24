@@ -1,53 +1,69 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonFab, IonFabButton, IonIcon, IonProgressBar, IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { 
+  IonContent, 
+  IonIcon, 
+  IonProgressBar, 
+  IonButton, 
+  IonItem, 
+  IonBadge,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { StorageService } from '../services/storage.service';
-import { ToastController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { 
+  refreshOutline, 
+  locationOutline, 
+  flag,
+  colorWandOutline
+} from 'ionicons/icons';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonContent, IonFab, IonFabButton, IonIcon, IonProgressBar, IonButton, IonSpinner],
+  imports: [
+    CommonModule, 
+    IonContent, 
+    IonIcon, 
+    IonProgressBar, 
+    IonButton, 
+    IonItem, 
+    IonBadge,
+    IonSkeletonText
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class HomePage implements OnInit {
-  currentTheme = 'light';
-  themes = ['light', 'dark', 'ocean', 'sunset', 'forest', 'pirate'];
-
+  currentTheme = 'dark';
   progress = 0;
-
   artists: any[] = [];
   isLoading = true;
 
-  // Friendly theme labels
-  private themeLabels: Record<string, string> = {
-    light: 'Claro',
-    dark: 'Oscuro',
-    ocean: 'Ocean',
-    sunset: 'Atardecer',
-    forest: 'Bosque',
-    pirate: '☠️ PIRATA'
-  };
-
-  constructor(private http: HttpClient, private storageService: StorageService, private router: Router, private toastController: ToastController) {}
-
-  async ngOnInit() {
-    await this.restoreTheme();
-    this.loadArtists();
+  constructor(
+    private http: HttpClient, 
+    private themeService: ThemeService,
+    private router: Router
+  ) {
+    addIcons({
+      refreshOutline,
+      locationOutline,
+      flag,
+      colorWandOutline
+    });
   }
 
-  private async restoreTheme() {
-    const saved = await this.storageService.get<string>('theme');
-    if (saved && this.themes.includes(saved)) {
-      this.currentTheme = saved;
-    }
-    document.body.classList.add(`${this.currentTheme}-theme`);
+  async ngOnInit() {
+    // Suscribirse al tema actual para lógica condicional (ej. textos "PIRATA")
+    this.themeService.currentTheme$.subscribe(theme => {
+      this.currentTheme = theme;
+    });
+    this.loadArtists();
   }
 
   async loadArtists() {
@@ -94,56 +110,24 @@ export class HomePage implements OnInit {
         }
       });
 
-      // Pequeña demora para simular un proceso de carga (opcional)
       setTimeout(() => resolve(artists), 400);
     });
   }
 
   onSlideChange(event: any) {
-    const [swiper] = event.detail;
+    const swiper = event.target.swiper;
     if (this.artists.length > 0) {
       this.progress = (swiper.realIndex + 1) / this.artists.length;
     }
   }
 
   async reloadArtists() {
-    // Blur any active element and reset list, then re-trigger load
     (document.activeElement as HTMLElement | null)?.blur();
     this.artists = [];
     await this.loadArtists();
   }
 
-  async cambiarColor() {
-    const currentIndex = this.themes.indexOf(this.currentTheme);
-    const nextIndex = (currentIndex + 1) % this.themes.length;
-    
-    // Remover tema anterior
-    document.body.classList.remove(`${this.currentTheme}-theme`);
-    
-    // Aplicar nuevo tema
-    this.currentTheme = this.themes[nextIndex];
-    document.body.classList.add(`${this.currentTheme}-theme`);
-
-    await this.storageService.set('theme', this.currentTheme);
-
-    // Mostrar toast con el tema actual
-    await this.showThemeToast(this.currentTheme);
-  }
-
-  private async showThemeToast(base: string) {
-    const label = this.themeLabels[base] || base;
-    const toast = await this.toastController.create({
-      message: `Tema: ${label}`,
-      duration: 1200,
-      position: 'bottom',
-      cssClass: 'theme-toast'
-    });
-    await toast.present();
-  }
-
-  async goIntro() {
-    (document.activeElement as HTMLElement | null)?.blur();
-    await this.storageService.remove('introSeen');
-    this.router.navigate(['/intro']);
+  getCurrentThemeLabel(): string {
+    return this.themeService.getThemeLabel(this.currentTheme);
   }
 }

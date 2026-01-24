@@ -38,9 +38,35 @@
 
 /* Small toast style for theme feedback */
 .theme-toast {
-  --background: rgba(0,0,0,0.85);
-  --color: #fff;
-  border-radius: 12px;
-  padding: 6px 12px;
-  font-weight: 600;
+  --background: #1DB954;
+  --color: #000;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #121212;
+}
+
+// Global form improvements
+ion-input::part(native) {
+  caret-color: var(--slide-button-background, #1DB954);
+}
+
+ion-item {
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Custom loading spinner
+.custom-loading {
+  --background: rgba(18, 18, 18, 0.95);
+  --spinner-color: #1DB954;
+
+  .loading-wrapper {
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+  }
 }

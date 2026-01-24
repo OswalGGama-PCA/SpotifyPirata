@@ -1,0 +1,76 @@
+<ion-split-pane contentId="main-content">
+  <!-- Menu Lateral -->
+  <ion-menu contentId="main-content" type="overlay">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <!-- Header del Usuario -->
+        <ion-list-header>
+          <ion-label>Spotify Pirata 🏴‍☠️</ion-label>
+        </ion-list-header>
+
+        <!-- Opciones del Menú -->
+        <ion-menu-toggle auto-hide="false">
+          <ion-item button (click)="verIntro()" detail="false">
+            <ion-icon slot="start" name="play-circle-outline"></ion-icon>
+            <ion-label>Ver la Intro</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <!-- Divider -->
+        <ion-item lines="none" class="menu-divider">
+          <ion-label></ion-label>
+        </ion-item>
+
+        <!-- Configuración y Logout -->
+        <ion-menu-toggle auto-hide="false">
+          <ion-item button detail="false">
+            <ion-icon slot="start" name="settings-outline"></ion-icon>
+            <ion-label>Configuración</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle auto-hide="false">
+          <ion-item button (click)="logout()" detail="false" class="logout-item">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Cerrar Sesión</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <!-- Contenido Principal -->
+  <div class="ion-page" id="main-content">
+    <!-- Header con Toolbar de Navegación -->
+    <ion-header>
+      <ion-toolbar color="primary">
+        <!-- Botón de menú (hamburguesa) -->
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
+        <!-- Título -->
+        <ion-title>{{ pageTitle }}</ion-title>
+
+        <!-- Botones de navegación y acciones -->
+        <ion-buttons slot="end">
+          <ion-button (click)="navigateToHome()" [class.active-nav]="currentPage === 'home'">
+            <ion-icon slot="icon-only" name="home-outline"></ion-icon>
+          </ion-button>
+          <ion-button (click)="cambiarTema()">
+            <ion-icon slot="icon-only" name="color-palette-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <!-- Router Outlet para las páginas hijas -->
+    <ion-router-outlet></ion-router-outlet>
+  </div>
+</ion-split-pane>
