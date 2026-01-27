@@ -78,10 +78,13 @@ export class LoginPage implements OnInit {
     });
   }
 
+  /**
+   * Al cargar: por ahora no necesito hacer nada especial aquí.
+   */
   ngOnInit() {}
 
   /**
-   * Maneja el proceso de inicio de sesión
+   * Esta es la función principal que hace toda la magia del login.
    */
   async login() {
     // Validar formulario
@@ -130,10 +133,9 @@ export class LoginPage implements OnInit {
       // Pequeña pausa para que se vea el toast
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // FLUJO: Login → Menu/Home (IntroGuard interceptará si es necesario)
-      // Si el usuario ya vio la intro, va directo al home.
-      // Si no, IntroGuard lo redirige a /intro.
-      this.router.navigate(['/menu/home'], { replaceUrl: true });
+      // FLUJO: Login → Intro → Menu/Home
+      // Siempre mostramos la intro al iniciar sesión por defecto, para cumplir el flujo.
+      this.router.navigate(['/intro'], { replaceUrl: true });
 
     } catch (error: any) {
       // Cerrar loading
@@ -146,7 +148,7 @@ export class LoginPage implements OnInit {
   }
 
   /**
-   * Muestra un toast con el mensaje especificado
+   * Un helper rápido para mostrar mensajes flotantes en pantalla.
    */
   private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
     const toast = await this.toastController.create({
@@ -160,8 +162,7 @@ export class LoginPage implements OnInit {
   }
 
   /**
-   * Navega a la página de registro
-   * Hace logout primero para evitar que el publicGuard bloquee el acceso
+   * Nos manda a la pantalla de registro si aún no tienes cuenta.
    */
   async goToRegister() {
     console.log('🚀 Navegando a /register');
@@ -175,7 +176,7 @@ export class LoginPage implements OnInit {
   }
 
   /**
-   * Navega a recuperación de contraseña
+   * Redirige a la recuperación de contraseña (por ahora solo muestra un aviso).
    */
   goToForgotPassword() {
     // TODO: Implementar página de recuperación

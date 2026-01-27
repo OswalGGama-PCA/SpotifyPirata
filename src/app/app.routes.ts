@@ -61,6 +61,11 @@ export const routes: Routes = [
         canActivate: [IntroGuard] // Verifica que haya visto la intro
       },
       {
+        path: 'artists',
+        loadComponent: () => import('./artists/artists.page').then(m => m.ArtistsPage),
+        canActivate: [IntroGuard]
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'

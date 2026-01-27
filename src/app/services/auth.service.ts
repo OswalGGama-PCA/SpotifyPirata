@@ -57,6 +57,10 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+  // Para saber si ya terminamos de leer el storage al arrancar
+  private isReadySubject = new BehaviorSubject<boolean>(false);
+  public isReady$ = this.isReadySubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private storage: StorageService,
@@ -83,8 +87,12 @@ export class AuthService {
         this.currentUserSubject.next(user);
         this.isAuthenticatedSubject.next(true);
       }
+      
+      // Ya terminamos de revisar, pase lo que pase
+      this.isReadySubject.next(true);
     } catch (error) {
       console.error('Error loading stored auth:', error);
+      this.isReadySubject.next(true); // También marcamos como listo si falla
     }
   }
 

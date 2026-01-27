@@ -96,15 +96,13 @@ export class RegisterPage implements OnInit {
     });
   }
 
+  /**
+   * Al iniciar, por ahora no hago nada aquí, pero lo dejo listo.
+   */
   ngOnInit() {}
 
   /**
-   * Maneja el proceso de registro
-   * Justificación de decisiones:
-   * - Validación completa antes de enviar
-   * - Loading state para mejor UX
-   * - Manejo de errores específicos
-   * - Navegación automática al login después del registro exitoso
+   * Aquí es donde registro a los nuevos usuarios. Reviso que todo esté bien antes de enviarlo.
    */
   async register() {
     // Validar formulario
@@ -183,9 +181,7 @@ export class RegisterPage implements OnInit {
   }
 
   /**
-   * Calcula la fortaleza de la contraseña
-   * Justificación: Feedback visual para el usuario sobre la seguridad de su contraseña
-   * @returns string - Clase CSS para el indicador de fortaleza
+   * Me ayuda a saber si la contraseña es segura o si es muy fácil de adivinar.
    */
   getPasswordStrength(): string {
     const password = this.registerForm.get('password')?.value || '';
@@ -208,8 +204,7 @@ export class RegisterPage implements OnInit {
   }
 
   /**
-   * Obtiene el texto descriptivo de la fortaleza de la contraseña
-   * @returns string - Texto descriptivo
+   * Muestra qué tan segura es la contraseña con un texto amigable.
    */
   getPasswordStrengthText(): string {
     const strength = this.getPasswordStrength();
@@ -224,9 +219,7 @@ export class RegisterPage implements OnInit {
   }
 
   /**
-   * Muestra un toast con el mensaje especificado
-   * @param message - Mensaje a mostrar
-   * @param color - Color del toast (success, danger, warning)
+   * Otra vez el helper para los avisos en pantalla.
    */
   private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
     const toast = await this.toastController.create({
@@ -240,7 +233,7 @@ export class RegisterPage implements OnInit {
   }
 
   /**
-   * Navega a la página de login
+   * Botón para regresar al login si ya tienes cuenta.
    */
   goToLogin() {
     this.router.navigate(['/login']);

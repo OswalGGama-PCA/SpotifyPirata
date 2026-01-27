@@ -1,0 +1,69 @@
+<ion-content>
+  <!-- Barra de búsqueda superior -->
+  <div class="search-container">
+    <ion-searchbar placeholder="Buscar artistas o géneros..." (ionInput)="handleSearch($event)" animated="true"
+      class="custom-search">
+    </ion-searchbar>
+  </div>
+
+  <!-- Estado de carga (Esqueletos) -->
+  <div *ngIf="isLoading">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let item of [1,2,3,4,5,6]">
+          <ion-card class="skeleton-card">
+            <div class="skeleton-img">
+              <ion-skeleton-text animated style="width: 100%; height: 100%"></ion-skeleton-text>
+            </div>
+            <ion-card-header>
+              <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Lista de Artistas Reales -->
+  <div *ngIf="!isLoading">
+    <!-- Mensaje si no hay resultados -->
+    <div *ngIf="filteredArtists.length === 0" class="no-results">
+      <ion-icon name="people-outline"></ion-icon>
+      <p>No encontramos ningún pirata con ese nombre...</p>
+      <ion-button fill="outline" color="primary" (click)="loadArtists()">Recargar lista</ion-button>
+    </div>
+
+    <!-- Grid de Artistas -->
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let artist of filteredArtists">
+          <ion-card class="artist-card">
+            <div class="card-image-wrapper">
+              <img [src]="artist.image || 'assets/default-artist.png'" [alt]="artist.name" />
+              <div class="popularity-badge">
+                <ion-icon name="stats-chart-outline"></ion-icon>
+                {{ artist.popularity }}%
+              </div>
+            </div>
+
+            <ion-card-header>
+              <ion-card-title>{{ artist.name }}</ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="genres-list">
+                <ion-badge *ngFor="let genre of artist.genres" color="primary" mode="ios">
+                  {{ genre }}
+                </ion-badge>
+              </div>
+              <div class="followers-count">
+                <ion-icon name="people-outline"></ion-icon>
+                {{ artist.followers | number }} Seguidores
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

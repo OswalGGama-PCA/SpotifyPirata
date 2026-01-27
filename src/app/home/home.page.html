@@ -26,9 +26,8 @@
   </div>
 
   <!-- Contenido Principal con Swiper -->
-  <swiper-container *ngIf="artists.length > 0; else skeletonTpl" [loop]="artists.length >= 3" [slidesPerView]="1"
-    [spaceBetween]="0" [effect]="'cards'" [grabCursor]="true" class="artist-swiper"
-    (realindexchange)="onSlideChange($event)">
+  <swiper-container *ngIf="artists.length > 0; else skeletonTpl" [slidesPerView]="1" [spaceBetween]="0"
+    [effect]="'cards'" [grabCursor]="true" class="artist-swiper" (realindexchange)="onSlideChange($event)">
     <swiper-slide *ngFor="let artist of artists">
       <div class="artist-card">
         <div class="image-container">

@@ -15,7 +15,21 @@
         </ion-list-header>
 
         <!-- Opciones del Menú -->
-        <ion-menu-toggle auto-hide="false">
+        <ion-menu-toggle [autoHide]="false">
+          <ion-item button (click)="navigateToHome()" [class.active-item]="currentPage === 'home'" detail="false">
+            <ion-icon slot="start" name="home-outline"></ion-icon>
+            <ion-label>Inicio</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle [autoHide]="false">
+          <ion-item button (click)="navigateToArtists()" [class.active-item]="currentPage === 'artists'" detail="false">
+            <ion-icon slot="start" name="people-outline"></ion-icon>
+            <ion-label>Artistas</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle [autoHide]="false">
           <ion-item button (click)="verIntro()" detail="false">
             <ion-icon slot="start" name="play-circle-outline"></ion-icon>
             <ion-label>Ver la Intro</ion-label>
@@ -28,14 +42,14 @@
         </ion-item>
 
         <!-- Configuración y Logout -->
-        <ion-menu-toggle auto-hide="false">
+        <ion-menu-toggle [autoHide]="false">
           <ion-item button detail="false">
             <ion-icon slot="start" name="settings-outline"></ion-icon>
             <ion-label>Configuración</ion-label>
           </ion-item>
         </ion-menu-toggle>
 
-        <ion-menu-toggle auto-hide="false">
+        <ion-menu-toggle [autoHide]="false">
           <ion-item button (click)="logout()" detail="false" class="logout-item">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
             <ion-label>Cerrar Sesión</ion-label>

@@ -5,10 +5,18 @@
   --ion-color-primary-contrast-rgb: 255, 255, 255;
   --ion-color-primary-shade: #1aa34a;
   --ion-color-primary-tint: #34c065;
+
+  --ion-font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-// Default (Spotify Dark)
+// Global Variables & Base Themes
 body {
+  // Spotify Dark (Default)
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
   --slide-background: #121212;
   --slide-text-color: #ffffff;
   --slide-secondary-text: #b3b3b3;
@@ -16,8 +24,13 @@ body {
   --slide-button-text-color: #000000;
 }
 
-// Light Theme (Optional alternative)
+// Light Theme
 body.light-theme {
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: #191414;
+  --ion-text-color-rgb: 25, 20, 20;
+
   --slide-background: #ffffff;
   --slide-text-color: #191414;
   --slide-secondary-text: #535353;
@@ -26,8 +39,12 @@ body.light-theme {
 }
 
 // Dark Theme (Explicit)
-// Same as default body but useful if class is toggled
 body.dark-theme {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
   --slide-background: #121212;
   --slide-text-color: #ffffff;
   --slide-secondary-text: #b3b3b3;
@@ -37,6 +54,11 @@ body.dark-theme {
 
 // Tema Ocean (Azul)
 body.ocean-theme {
+  --ion-background-color: #091236;
+  --ion-background-color-rgb: 9, 18, 54;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
   --slide-background: linear-gradient(135deg, #091236 0%, #1E215D 100%);
   --slide-text-color: #ffffff;
   --slide-secondary-text: #a0a0a0;
@@ -46,6 +68,11 @@ body.ocean-theme {
 
 // Tema Sunset (Atardecer)
 body.sunset-theme {
+  --ion-background-color: #2d132c;
+  --ion-background-color-rgb: 45, 19, 44;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
   --slide-background: linear-gradient(135deg, #2d132c 0%, #561e38 100%);
   --slide-text-color: #ffffff;
   --slide-secondary-text: #ffe0e0;
@@ -55,6 +82,11 @@ body.sunset-theme {
 
 // Tema Forest (Bosque)
 body.forest-theme {
+  --ion-background-color: #0f2027;
+  --ion-background-color-rgb: 15, 32, 39;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
   --slide-background: linear-gradient(135deg, #0f2027 0%, #203a43 100%, #2c5364 100%);
   --slide-text-color: #ffffff;
   --slide-secondary-text: #d0f0e0;
@@ -64,9 +96,14 @@ body.forest-theme {
 
 // Tema Pirata
 body.pirate-theme {
+  --ion-background-color: #000000;
+  --ion-background-color-rgb: 0, 0, 0;
+  --ion-text-color: #ffd700;
+  --ion-text-color-rgb: 255, 215, 0;
+
   --slide-background: #000000;
   --slide-text-color: #ffd700;
   --slide-secondary-text: #d4af37;
   --slide-button-background: #cc0000;
-  --slide-button-text-color: #000000;
+  --slide-button-text-color: #ffffff;
 }

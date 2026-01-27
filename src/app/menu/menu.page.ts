@@ -27,10 +27,13 @@ import {
   playCircleOutline,
   settingsOutline,
   logOutOutline,
-  menuOutline
+  menuOutline,
+  peopleOutline,
+  colorPaletteOutline
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-menu',
@@ -59,12 +62,13 @@ import { ThemeService } from '../services/theme.service';
   ]
 })
 export class MenuPage implements OnInit {
-  currentPage: 'home' | 'intro' = 'home';
+  currentPage: 'home' | 'intro' | 'artists' = 'home';
   pageTitle = 'Inicio';
 
   constructor(
     private authService: AuthService,
     private themeService: ThemeService,
+    private storageService: StorageService,
     private router: Router
   ) {
     // Registrar iconos
@@ -73,7 +77,9 @@ export class MenuPage implements OnInit {
       playCircleOutline,
       settingsOutline,
       logOutOutline,
-      menuOutline
+      menuOutline,
+      peopleOutline,
+      colorPaletteOutline
     });
 
     // Detectar cambios de ruta para actualizar el título y página activa
@@ -84,18 +90,24 @@ export class MenuPage implements OnInit {
     });
   }
 
+  /**
+   * Al iniciar, revisamos en qué ruta estamos para marcar el menú.
+   */
   ngOnInit() {
     // Establecer página inicial basada en la ruta actual
     this.updateCurrentPage(this.router.url);
   }
 
   /**
-   * Actualiza la página actual y el título basado en la URL
+   * Mira en qué parte de la app estamos para poner el título correcto arriba.
    */
   private updateCurrentPage(url: string) {
     if (url.includes('/menu/home')) {
       this.currentPage = 'home';
       this.pageTitle = 'Inicio';
+    } else if (url.includes('/menu/artists')) {
+      this.currentPage = 'artists';
+      this.pageTitle = 'Artistas';
     } else if (url.includes('/intro')) {
       this.currentPage = 'intro';
       this.pageTitle = 'Introducción';
@@ -103,35 +115,48 @@ export class MenuPage implements OnInit {
   }
 
   /**
-   * Navega a la página Home
+   * Me manda directo al inicio.
    */
   navigateToHome() {
     this.router.navigate(['/menu/home']);
   }
 
   /**
-   * Navega a la página Intro
+   * Navegación a la lista de artistas.
+   */
+  navigateToArtists() {
+    this.router.navigate(['/menu/artists']);
+  }
+
+  /**
+   * Nos lleva de vuelta a la introducción de la app.
    */
   navigateToIntro() {
     this.router.navigate(['/intro']);
   }
 
   /**
-   * Cambia el tema de la aplicación
+   * Botón para cambiar entre los diferentes estilos visuales.
    */
   async cambiarTema() {
     await this.themeService.toggleTheme();
   }
 
   /**
-   * Ver la intro desde el menú lateral
+   * Opción para volver a ver los slides de bienvenida.
    */
-  verIntro() {
+  async verIntro() {
+    const user = this.authService.currentUser;
+    if (user) {
+      await this.storageService.remove(`introSeen_${user.id}`);
+    }
+    await this.storageService.remove('introSeen');
+    
     this.router.navigate(['/intro']);
   }
 
   /**
-   * Cierra la sesión del usuario
+   * Sale de la cuenta y nos manda al login.
    */
   async logout() {
     await this.authService.logout();

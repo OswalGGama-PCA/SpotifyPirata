@@ -5,8 +5,6 @@ import {
   IonIcon, 
   IonProgressBar, 
   IonButton, 
-  IonItem, 
-  IonBadge,
   IonSkeletonText
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
@@ -33,8 +31,6 @@ import { ThemeService } from '../services/theme.service';
     IonIcon, 
     IonProgressBar, 
     IonButton, 
-    IonItem, 
-    IonBadge,
     IonSkeletonText
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -58,14 +54,19 @@ export class HomePage implements OnInit {
     });
   }
 
+  /**
+   * Al arrancar la página: escucho si cambia el tema y cargo a los artistas.
+   */
   async ngOnInit() {
-    // Suscribirse al tema actual para lógica condicional (ej. textos "PIRATA")
     this.themeService.currentTheme$.subscribe(theme => {
       this.currentTheme = theme;
     });
     this.loadArtists();
   }
 
+  /**
+   * Maneja el estado de carga mientras bajamos la info de los artistas.
+   */
   async loadArtists() {
     this.isLoading = true;
     try {
@@ -114,6 +115,9 @@ export class HomePage implements OnInit {
     });
   }
 
+  /**
+   * Actualiza la barrita de progreso cuando nos movemos entre los slides.
+   */
   onSlideChange(event: any) {
     const swiper = event.target.swiper;
     if (this.artists.length > 0) {
@@ -121,12 +125,18 @@ export class HomePage implements OnInit {
     }
   }
 
+  /**
+   * Limpia todo y vuelve a traer a los artistas desde la API.
+   */
   async reloadArtists() {
     (document.activeElement as HTMLElement | null)?.blur();
     this.artists = [];
     await this.loadArtists();
   }
 
+  /**
+   * Me dice qué tema tengo puesto ahorita para mostrarlo en el botón.
+   */
   getCurrentThemeLabel(): string {
     return this.themeService.getThemeLabel(this.currentTheme);
   }

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { map, take } from 'rxjs/operators';
+import { map, take, filter, switchMap } from 'rxjs/operators';
 
 /**
  * Guard de autenticación
@@ -18,7 +18,10 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.isAuthenticated$.pipe(
+  // Esperamos a que el servicio esté listo (que haya leído el storage)
+  return authService.isReady$.pipe(
+    filter(ready => ready),
+    switchMap(() => authService.isAuthenticated$),
     take(1),
     map(isAuthenticated => {
       if (isAuthenticated) {
@@ -54,7 +57,10 @@ export const publicGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.isAuthenticated$.pipe(
+  // Esperamos a que el servicio esté listo
+  return authService.isReady$.pipe(
+    filter(ready => ready),
+    switchMap(() => authService.isAuthenticated$),
     take(1),
     map(isAuthenticated => {
       if (!isAuthenticated) {

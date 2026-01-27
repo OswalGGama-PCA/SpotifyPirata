@@ -4,11 +4,11 @@
 
 // Variables
 :host {
-    --menu-background: #000000;
-    --menu-text-color: #b3b3b3;
-    --menu-text-active: #ffffff;
-    --menu-item-hover: #282828;
-    --menu-border-color: #282828;
+    --menu-background: var(--ion-background-color, #121212);
+    --menu-text-color: var(--slide-secondary-text, #b3b3b3);
+    --menu-text-active: var(--slide-text-color, #ffffff);
+    --menu-item-hover: rgba(var(--ion-color-primary-rgb, 29, 185, 84), 0.1);
+    --menu-border-color: rgba(255, 255, 255, 0.1);
 }
 
 // ============================================
@@ -152,6 +152,17 @@ ion-menu {
                 transition: color 0.2s ease;
             }
 
+            // Active state
+            &.active-item {
+                --background: var(--menu-item-hover);
+                --color: var(--menu-text-active);
+                border-left: 4px solid var(--slide-button-background, var(--ion-color-primary));
+
+                ion-icon {
+                    color: var(--menu-text-active);
+                }
+            }
+
             // Hover state
             &:hover {
                 --background: var(--menu-item-hover);
@@ -229,6 +240,10 @@ ion-menu {
 // DARK THEME OVERRIDES
 // ============================================
 
+// ============================================
+// THEME OVERRIDES
+// ============================================
+
 body.dark-theme {
     ion-menu {
         --background: #000000;
@@ -236,5 +251,62 @@ body.dark-theme {
 
     .ion-page {
         background: #121212;
+    }
+}
+
+body.pirate-theme {
+    ion-menu {
+        --menu-background: #000000;
+        --menu-text-active: #ffd700;
+        --menu-text-color: #d4af37;
+        --menu-border-color: rgba(255, 215, 0, 0.2);
+        --menu-item-hover: rgba(255, 215, 0, 0.1);
+    }
+
+    .ion-page ion-header ion-toolbar {
+        --background: #d40000;
+        --color: #ffffff;
+    }
+}
+
+body.ocean-theme {
+    ion-menu {
+        --menu-background: #091236;
+        --menu-text-active: #ffffff;
+        --menu-text-color: rgba(255, 255, 255, 0.7);
+        --menu-item-hover: rgba(79, 172, 254, 0.15);
+    }
+
+    .ion-page ion-header ion-toolbar {
+        --background: #1E215D;
+        --color: #ffffff;
+    }
+}
+
+body.sunset-theme {
+    ion-menu {
+        --menu-background: #2d132c;
+        --menu-text-active: #ffffff;
+        --menu-text-color: rgba(255, 255, 255, 0.7);
+        --menu-item-hover: rgba(219, 75, 94, 0.15);
+    }
+
+    .ion-page ion-header ion-toolbar {
+        --background: #561e38;
+        --color: #ffffff;
+    }
+}
+
+body.forest-theme {
+    ion-menu {
+        --menu-background: #0f2027;
+        --menu-text-active: #ffffff;
+        --menu-text-color: rgba(255, 255, 255, 0.7);
+        --menu-item-hover: rgba(46, 204, 113, 0.15);
+    }
+
+    .ion-page ion-header ion-toolbar {
+        --background: #203a43;
+        --color: #ffffff;
     }
 }

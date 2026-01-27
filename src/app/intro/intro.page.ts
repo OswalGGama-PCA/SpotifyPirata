@@ -6,19 +6,23 @@ import {
   IonButton, 
   IonIcon, 
   IonProgressBar,
+  IonFab,
+  IonFabButton,
   AnimationController,
   GestureController
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/storage.service';
 import { AuthService } from '../services/auth.service';
+import { ThemeService } from '../services/theme.service';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { 
   chevronBackOutline, 
   chevronForwardOutline, 
   arrowForwardOutline,
-  rocketOutline
+  rocketOutline,
+  colorPaletteOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -31,6 +35,8 @@ import {
     IonButton,
     IonIcon,
     IonProgressBar,
+    IonFab,
+    IonFabButton,
     CommonModule, 
     FormsModule
   ]
@@ -76,6 +82,7 @@ export class IntroPage implements OnInit, AfterViewInit {
   isMobile = false;
   prefersReducedMotion = false;
   announceMessage = '';
+  isAnimating = false;
 
   private swipeGesture: any;
   private _parallaxHandlers?: { onMove: (e: MouseEvent) => void; onLeave: () => void; el?: any };
@@ -84,6 +91,7 @@ export class IntroPage implements OnInit, AfterViewInit {
     private router: Router, 
     private storageService: StorageService,
     private authService: AuthService,
+    private themeService: ThemeService,
     private animationCtrl: AnimationController,
     private gestureCtrl: GestureController,
     private toastController: ToastController
@@ -92,32 +100,25 @@ export class IntroPage implements OnInit, AfterViewInit {
       chevronBackOutline,
       chevronForwardOutline,
       arrowForwardOutline,
-      rocketOutline
+      rocketOutline,
+      colorPaletteOutline
     });
-    
-    // Establecer tema dark (premium) por defecto
-    this.setDarkTheme();
   }
+
 
   /**
-   * Establece el tema dark premium por defecto
+   * Al iniciar, configuramos gestos y detectamos si es móvil.
    */
-  private setDarkTheme(): void {
-    document.body.classList.remove('light-theme', 'ocean-theme', 'sunset-theme', 'forest-theme', 'pirate-theme');
-    document.body.classList.add('dark-theme');
-  }
-
   async ngOnInit() {
     this.checkMobile();
     this.detectSwipeGestures();
     this.prefersReducedMotion = !!(window && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-    this.preloadImages(); // Precargar imágenes para mejor performance
+    this.preloadImages();
   }
 
   /**
-   * Precarga todas las imágenes de los slides
-   * Mejora la experiencia de usuario al evitar delays en la navegación
+   * Precarga las imágenes para que la navegación sea fluida.
    */
   private preloadImages(): void {
     this.slides.forEach(slide => {
@@ -131,7 +132,7 @@ export class IntroPage implements OnInit, AfterViewInit {
   /**
    * Obtiene un slide de forma segura
    * @param index - Índice del slide
-   * @returns Slide en el índice especificado o el primero como fallback
+   * @returns 
    */
   getSafeSlide(index: number) {
     return this.slides[index] || this.slides[0];
@@ -151,11 +152,17 @@ export class IntroPage implements OnInit, AfterViewInit {
     this.enableParallax();
   }
 
+  /**
+   * Detecta cambios en el tamaño de la pantalla.
+   */
   @HostListener('window:resize')
   onResize() {
     this.checkMobile();
   }
 
+  /**
+   * Revisa si la pantalla es de tamaño móvil.
+   */
   private checkMobile() {
     this.isMobile = window.innerWidth <= 767;
   }
@@ -200,13 +207,17 @@ export class IntroPage implements OnInit, AfterViewInit {
         // Efecto visual durante el swipe
         const slide = element.querySelector('.slide.active');
         if (slide) {
+          // Desactivar transición CSS para evitar "doble" efecto o lag
+          slide.style.transition = 'none'; 
           slide.style.transform = `translateX(${ev.deltaX}px) scale(${1 - Math.abs(ev.deltaX) / 1000})`;
           slide.style.opacity = `${1 - Math.abs(ev.deltaX) / 300}`;
         }
       },
       onEnd: (ev) => {
-        const slide = element.querySelector('.slide.active');
+        const slide = element.querySelector('.slide.active') as HTMLElement;
         if (slide) {
+          // Restaurar transición y limpiar estilos inline
+          slide.style.transition = ''; 
           slide.style.transform = '';
           slide.style.opacity = '';
         }
@@ -224,21 +235,28 @@ export class IntroPage implements OnInit, AfterViewInit {
     this.swipeGesture.enable(true);
   }
 
+  /**
+   * Botón para ir al siguiente slide.
+   */
   next() {
-    if (this.currentIndex < this.slides.length - 1) {
+    if (this.currentIndex < this.slides.length - 1 && !this.isAnimating) {
       this.nextWithAnimation();
     }
   }
 
+  /**
+   * Botón para volver al slide anterior.
+   */
   prev() {
-    if (this.currentIndex > 0) {
+    if (this.currentIndex > 0 && !this.isAnimating) {
       this.prevWithAnimation();
     }
   }
 
   private nextWithAnimation() {
-    if (this.currentIndex >= this.slides.length - 1) return;
+    if (this.currentIndex >= this.slides.length - 1 || this.isAnimating) return;
     
+    this.isAnimating = true;
     const currentSlide = this.slidesWrapper?.nativeElement.querySelector('.slide.active');
     if (currentSlide) {
       const animation = this.animationCtrl.create()
@@ -253,12 +271,14 @@ export class IntroPage implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.currentIndex++;
       this.playEntranceAnimation();
+      this.isAnimating = false;
     }, 150);
   }
 
   private prevWithAnimation() {
-    if (this.currentIndex <= 0) return;
+    if (this.currentIndex <= 0 || this.isAnimating) return;
     
+    this.isAnimating = true;
     const currentSlide = this.slidesWrapper?.nativeElement.querySelector('.slide.active');
     if (currentSlide) {
       const animation = this.animationCtrl.create()
@@ -273,6 +293,7 @@ export class IntroPage implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.currentIndex--;
       this.playEntranceAnimation();
+      this.isAnimating = false;
     }, 150);
   }
 
@@ -351,6 +372,9 @@ export class IntroPage implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Se ejecuta cuando la imagen del slide carga correctamente.
+   */
   onImageLoad() {
     this.imageLoaded = true;
     this.imageError = false;
@@ -379,18 +403,23 @@ export class IntroPage implements OnInit, AfterViewInit {
   }
 
   async skipToEnd() {
-    // Si estamos en el último slide, ir a home
-    if (this.currentIndex === this.slides.length - 1) {
-      await this.goHome();
-    } else {
-      // Si no, saltar al último slide
-      this.currentIndex = this.slides.length - 1;
-      this.playEntranceAnimation();
-      
-      // Accesibilidad: anunciar y mover el foco al indicador correspondiente
-      this.announceSlide();
-      setTimeout(() => this.focusDot(this.currentIndex), 80);
+    await this.goHome();
+  }
+
+  async restartIntro() {
+    this.currentIndex = 0;
+    this.playEntranceAnimation();
+    
+    // Resetear flag para que si recarga vuelva a ver la intro
+    const user = this.authService.currentUser;
+    if (user) {
+      await this.storageService.remove(`introSeen_${user.id}`);
     }
+    await this.storageService.remove('introSeen');
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 
   goToSlide(index: number) {
@@ -406,7 +435,9 @@ export class IntroPage implements OnInit, AfterViewInit {
 
   private announceSlide() {
     const s = this.slides[this.currentIndex];
-    this.announceMessage = `${s.title}. ${s.subtitle}`;
+    if (s) {
+      this.announceMessage = `${s.title}. ${s.subtitle}`;
+    }
   }
 
   private focusDot(index: number) {
@@ -443,6 +474,9 @@ export class IntroPage implements OnInit, AfterViewInit {
     this._parallaxHandlers = { onMove, onLeave, el };
   }
 
+  /**
+   * Obtiene el valor para la barra de progreso de la intro.
+   */
   getProgressValue(): number {
     return (this.currentIndex + 1) / this.slides.length;
   }
