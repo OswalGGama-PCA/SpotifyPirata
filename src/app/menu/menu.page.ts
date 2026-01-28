@@ -29,7 +29,10 @@ import {
   logOutOutline,
   menuOutline,
   peopleOutline,
-  colorPaletteOutline
+  colorPaletteOutline,
+  musicalNotesOutline,
+  heartOutline,
+  personCircleOutline
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
@@ -62,7 +65,7 @@ import { StorageService } from '../services/storage.service';
   ]
 })
 export class MenuPage implements OnInit {
-  currentPage: 'home' | 'intro' | 'artists' = 'home';
+  currentPage: 'home' | 'intro' | 'artists' | 'music' | 'library' | 'profile' = 'home';
   pageTitle = 'Inicio';
 
   constructor(
@@ -79,7 +82,10 @@ export class MenuPage implements OnInit {
       logOutOutline,
       menuOutline,
       peopleOutline,
-      colorPaletteOutline
+      colorPaletteOutline,
+      musicalNotesOutline,
+      heartOutline,
+      personCircleOutline
     });
 
     // Detectar cambios de ruta para actualizar el título y página activa
@@ -98,9 +104,6 @@ export class MenuPage implements OnInit {
     this.updateCurrentPage(this.router.url);
   }
 
-  /**
-   * Mira en qué parte de la app estamos para poner el título correcto arriba.
-   */
   private updateCurrentPage(url: string) {
     if (url.includes('/menu/home')) {
       this.currentPage = 'home';
@@ -108,6 +111,15 @@ export class MenuPage implements OnInit {
     } else if (url.includes('/menu/artists')) {
       this.currentPage = 'artists';
       this.pageTitle = 'Artistas';
+    } else if (url.includes('/menu/music')) {
+      this.currentPage = 'music';
+      this.pageTitle = 'Música';
+    } else if (url.includes('/menu/library')) {
+      this.currentPage = 'library';
+      this.pageTitle = 'Mi Tesoro';
+    } else if (url.includes('/menu/profile')) {
+      this.currentPage = 'profile';
+      this.pageTitle = 'Mi Camarote';
     } else if (url.includes('/intro')) {
       this.currentPage = 'intro';
       this.pageTitle = 'Introducción';
@@ -126,6 +138,18 @@ export class MenuPage implements OnInit {
    */
   navigateToArtists() {
     this.router.navigate(['/menu/artists']);
+  }
+
+  navigateToMusic() {
+    this.router.navigate(['/menu/music']);
+  }
+
+  navigateToLibrary() {
+    this.router.navigate(['/menu/library']);
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['/menu/profile']);
   }
 
   /**

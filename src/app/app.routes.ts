@@ -66,6 +66,21 @@ export const routes: Routes = [
         canActivate: [IntroGuard]
       },
       {
+        path: 'music',
+        loadComponent: () => import('./music/music.page').then(m => m.MusicPage),
+        canActivate: [IntroGuard]
+      },
+      {
+        path: 'library',
+        loadComponent: () => import('./library/library.page').then(m => m.LibraryPage),
+        canActivate: [IntroGuard]
+      },
+       {
+        path: 'profile',
+        loadComponent: () => import('./profile/profile.page').then(m => m.ProfilePage),
+        canActivate: [IntroGuard]
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'
@@ -80,5 +95,6 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'login'
-  }
+  },
+
 ];

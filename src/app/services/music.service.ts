@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /**
  * Servicio para conectar con la API de Música (Rails)
@@ -13,13 +14,44 @@ export class MusicService {
   // URL base definida en la colección de Postman
   private readonly BASE_URL = 'https://music.fly.dev';
 
+  // Cache en memoria para evitar peticiones redundantes
+  private artistsCache: any[] = [];
+
   constructor(private http: HttpClient) { }
 
   /**
    * Obtiene la lista completa de artistas desde el backend
+   * Implementa estrategia Cache-First
    */
   getArtists(): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/artists`);
+    if (this.artistsCache.length > 0) {
+      // Si ya tenemos datos, los devolvemos inmediatamente
+      return of(this.artistsCache);
+    }
+    
+    // Si no, hacemos la petición y guardamos en caché
+    return this.http.get<any[]>(`${this.BASE_URL}/artists`).pipe(
+      tap(data => {
+        // CORRECCIÓN ESPECÍFICA: La imagen de BZRP de la API falla (403/Broken)
+        // La reemplazamos manualmente por una segura
+        const bzrp = data.find(a => a.name === 'BZRP');
+        if (bzrp) {
+          // Usamos una imagen de placeholders confiable o un asset local si lo tuviéramos
+          // Por ahora usaré una URL pública estable de BZRP
+          bzrp.image = 'https://upload.wikimedia.org/wikipedia/commons/2/23/Bizarrap_in_2024.jpg';
+        }
+        
+        this.artistsCache = data;
+      })
+    );
+  }
+
+  /**
+   * Fuerza la recarga de artistas ignorando el caché
+   */
+  refreshArtists(): Observable<any> {
+    this.artistsCache = [];
+    return this.getArtists();
   }
 
   /**

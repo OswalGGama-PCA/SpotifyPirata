@@ -1,0 +1,120 @@
+/* LIBRARY PAGE STYLES */
+
+ion-content {
+    --background: var(--ion-background-color);
+}
+
+.track-list {
+    padding: 16px;
+    background: transparent;
+}
+
+.track-item {
+    --background: transparent;
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+
+    &:hover {
+        --background: rgba(var(--ion-text-color-rgb), 0.04);
+
+        .overlay {
+            opacity: 1;
+        }
+    }
+
+    &.playing {
+        --background: rgba(var(--ion-text-color-rgb), 0.08);
+
+        .track-title {
+            color: var(--slide-button-background);
+        }
+
+        .overlay {
+            opacity: 1;
+        }
+    }
+}
+
+/* Album Art */
+.album-art {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    margin-right: 16px;
+    background: #2a2a2a;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+
+    ion-icon {
+        font-size: 1.5rem;
+        color: #fff;
+    }
+}
+
+/* Info */
+.track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.track-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--slide-text-color);
+}
+
+.track-artist {
+    color: var(--slide-secondary-text);
+    font-size: 0.85rem;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+    color: var(--slide-secondary-text);
+
+    ion-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        color: var(--slide-button-background);
+        opacity: 0.5;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--slide-text-color);
+        margin-bottom: 8px;
+    }
+
+    p {
+        font-size: 1rem;
+        max-width: 250px;
+    }
+}

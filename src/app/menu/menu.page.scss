@@ -30,13 +30,14 @@ ion-split-pane {
 
     ion-header {
         ion-toolbar {
-            --background: var(--slide-button-background, var(--ion-color-primary, #1db954));
-            --color: var(--slide-button-text-color, #ffffff);
+            --background: var(--header-background);
+            --color: var(--header-text-color);
             --border-width: 0;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
             transition: --background 0.5s ease, --color 0.5s ease;
 
             ion-title {
+                --color: var(--menu-text-active);
                 font-weight: 800;
                 font-size: 1.25rem;
                 letter-spacing: -0.5px;
@@ -243,70 +244,3 @@ ion-menu {
 // ============================================
 // THEME OVERRIDES
 // ============================================
-
-body.dark-theme {
-    ion-menu {
-        --background: #000000;
-    }
-
-    .ion-page {
-        background: #121212;
-    }
-}
-
-body.pirate-theme {
-    ion-menu {
-        --menu-background: #000000;
-        --menu-text-active: #ffd700;
-        --menu-text-color: #d4af37;
-        --menu-border-color: rgba(255, 215, 0, 0.2);
-        --menu-item-hover: rgba(255, 215, 0, 0.1);
-    }
-
-    .ion-page ion-header ion-toolbar {
-        --background: #d40000;
-        --color: #ffffff;
-    }
-}
-
-body.ocean-theme {
-    ion-menu {
-        --menu-background: #091236;
-        --menu-text-active: #ffffff;
-        --menu-text-color: rgba(255, 255, 255, 0.7);
-        --menu-item-hover: rgba(79, 172, 254, 0.15);
-    }
-
-    .ion-page ion-header ion-toolbar {
-        --background: #1E215D;
-        --color: #ffffff;
-    }
-}
-
-body.sunset-theme {
-    ion-menu {
-        --menu-background: #2d132c;
-        --menu-text-active: #ffffff;
-        --menu-text-color: rgba(255, 255, 255, 0.7);
-        --menu-item-hover: rgba(219, 75, 94, 0.15);
-    }
-
-    .ion-page ion-header ion-toolbar {
-        --background: #561e38;
-        --color: #ffffff;
-    }
-}
-
-body.forest-theme {
-    ion-menu {
-        --menu-background: #0f2027;
-        --menu-text-active: #ffffff;
-        --menu-text-color: rgba(255, 255, 255, 0.7);
-        --menu-item-hover: rgba(46, 204, 113, 0.15);
-    }
-
-    .ion-page ion-header ion-toolbar {
-        --background: #203a43;
-        --color: #ffffff;
-    }
-}

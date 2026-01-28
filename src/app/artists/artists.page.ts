@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { 
   IonContent, 
+  IonHeader,
+  IonToolbar,
   IonBadge,
   IonSkeletonText,
   IonSearchbar,
@@ -26,7 +29,9 @@ import { peopleOutline, musicalNotesOutline, statsChartOutline } from 'ionicons/
   styleUrls: ['./artists.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
+    IonContent,
+    IonHeader,
+    IonToolbar, 
     IonBadge,
     IonSkeletonText,
     IonSearchbar,
@@ -49,7 +54,7 @@ export class ArtistsPage implements OnInit {
   isLoading = true;
   searchTerm = '';
 
-  constructor(private musicService: MusicService) {
+  constructor(private musicService: MusicService, private router: Router) {
     addIcons({
       peopleOutline,
       musicalNotesOutline,
@@ -62,6 +67,15 @@ export class ArtistsPage implements OnInit {
    */
   ngOnInit() {
     this.loadArtists();
+  }
+  
+  /**
+   * Navega a la página de música buscando automáticamente al artista seleccionado
+   */
+  goToArtistMusic(artistName: string) {
+    this.router.navigate(['/menu/music'], {
+      queryParams: { q: artistName }
+    });
   }
 
   /**
@@ -98,5 +112,11 @@ export class ArtistsPage implements OnInit {
       artist.name.toLowerCase().includes(query) || 
       (artist.genres && artist.genres.some((g: string) => g.toLowerCase().includes(query)))
     );
+  }
+  /**
+   * Optimización de rendimiento para ngFor
+   */
+  trackByArtist(index: number, artist: any): number {
+    return artist.id;
   }
 }

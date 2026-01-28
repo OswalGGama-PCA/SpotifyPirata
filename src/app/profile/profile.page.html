@@ -1,0 +1,66 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Mi Camarote</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="profile-container">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-wrapper">
+        <img [src]="avatarUrl" alt="Avatar" />
+        <div class="rank-badge">
+          <ion-icon name="skull-outline"></ion-icon>
+        </div>
+      </div>
+      <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>
+      <p class="email">{{ user?.email }}</p>
+      <div class="level-pill">{{ pirateLevel }}</div>
+    </div>
+
+    <!-- Stats Grid -->
+    <ion-grid class="stats-grid">
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="stat-card">
+            <ion-card-content>
+              <div class="stat-icon">
+                <ion-icon name="musical-notes-outline"></ion-icon>
+              </div>
+              <h3>{{ favoritesCount }}</h3>
+              <p>Tesoros</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="stat-card">
+            <ion-card-content>
+              <div class="stat-icon trophy">
+                <ion-icon name="trophy-outline"></ion-icon>
+              </div>
+              <h3>{{ favoritesCount * 50 }}XP</h3>
+              <p>Fama</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Actions List -->
+    <ion-list lines="none" class="action-list">
+      <ion-item button detail="true" (click)="logout()" class="logout-item">
+        <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+        <ion-label color="danger">Abandonar el Barco</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div class="version-info">
+      <p>Spotify Pirata v1.0.0</p>
+      <p>Hecho con ⚓ por el Equipo Deezer by GamaYuto21</p>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,257 @@
+/* MUSIC PAGE STYLES */
+
+ion-content {
+    --background: var(--ion-background-color);
+}
+
+.header-search {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ion-background-color);
+    /* Fondo base sólido */
+    padding-top: 80px;
+    /* Espacio extra para separar del header global */
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.05);
+    transition: background 0.3s ease;
+}
+
+/* Glassmorphism solo si está soportado */
+@supports (backdrop-filter: blur(20px)) {
+    .header-search {
+        background: rgba(var(--ion-background-color-rgb, 18, 18, 18), 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--slide-text-color);
+    margin-bottom: 24px;
+    text-align: center;
+    padding:3%
+}
+
+.search-wrapper {
+    padding-top: 8px;
+    padding-bottom: 4px;
+}
+
+ion-searchbar {
+    --border-radius: 12px;
+    --placeholder-color: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.5);
+    --background: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.08);
+    --color: var(--slide-text-color);
+    --icon-color: var(--slide-button-text-color);
+    /* Icono lupa visible */
+    --box-shadow: none;
+    padding-inline: 16px;
+    transition: transform 0.2s;
+}
+
+ion-searchbar:focus-within {
+    transform: scale(1.01);
+    --background: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.12);
+}
+
+/* Track List */
+.track-list {
+    background: transparent;
+    padding: 8px 16px 80px;
+    /* Padding bottom extra para el scroll */
+}
+
+.track-item {
+    --background: transparent;
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+
+    /* Hover effect para desktop */
+    &:hover {
+        --background: rgba(var(--ion-text-color-rgb), 0.04);
+
+        .overlay {
+            opacity: 1;
+            /* Mostrar play button al hover */
+        }
+    }
+
+    &.playing {
+        --background: rgba(var(--ion-text-color-rgb), 0.08);
+        /* Highlight si suena */
+
+        .track-title {
+            color: var(--slide-button-background);
+            /* Color de tema */
+        }
+
+        .overlay {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+/* Album Art & Overlay */
+.album-art {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    margin-right: 16px;
+    background: #2a2a2a;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    /* Oculto por defecto en desktop */
+    transition: opacity 0.2s ease;
+}
+
+ion-icon {
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+/* Mobile: Siempre visible overlay si es táctil? No, mejor solo play state. */
+@media (hover: none) {
+    .overlay {
+        opacity: 0;
+        /* En móvil solo visible si playing */
+    }
+
+    .track-item.playing .overlay {
+        opacity: 1;
+    }
+}
+
+/* Track Info */
+.track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.track-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--slide-text-color);
+    transition: color 0.3s;
+}
+
+.track-artist {
+    color: var(--slide-secondary-text);
+    font-size: 0.85rem;
+}
+
+/* Meta info (Time & EQ) */
+.track-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.like-btn {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    margin: 0;
+    height: 32px;
+}
+
+.track-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 40px;
+}
+
+.duration {
+    font-size: 0.8rem;
+    color: var(--slide-secondary-text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Equalizer Animation */
+.equalizer {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    height: 16px;
+    width: 16px;
+}
+
+.equalizer span {
+    width: 3px;
+    background: var(--slide-button-background);
+    animation: eq 1s ease-in-out infinite;
+}
+
+.equalizer span:nth-child(1) {
+    animation-duration: 0.8s;
+    height: 60%;
+}
+
+.equalizer span:nth-child(2) {
+    animation-duration: 0.9s;
+    height: 30%;
+}
+
+.equalizer span:nth-child(3) {
+    animation-duration: 0.7s;
+    height: 50%;
+}
+
+@keyframes eq {
+
+    0%,
+    100% {
+        height: 20%;
+    }
+
+    50% {
+        height: 100%;
+    }
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--slide-secondary-text);
+
+    ion-icon {
+        font-size: 4rem;
+        margin-bottom: 16px;
+        color: var(--slide-button-background);
+        /* Icono del color de tema */
+        opacity: 0.5;
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+}

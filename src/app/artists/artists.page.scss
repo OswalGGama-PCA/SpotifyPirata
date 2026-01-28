@@ -3,49 +3,65 @@ ion-content {
 }
 
 .search-container {
-    padding: 12px 16px 16px;
-    margin-top: 30px;
-    position: sticky;
-    top: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+ion-header {
+    margin-top: 60px;
+    /* Fuerza el desplazamiento debajo del header global */
+    background: transparent;
+    box-shadow: none;
     z-index: 1000;
-    background: var(--ion-background-color);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    margin-bottom: 8px;
-    transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+ion-toolbar.search-toolbar {
+    --background: rgba(var(--ion-background-color-rgb, 18, 18, 18), 0.95);
+    --border-width: 0;
+    padding-top: 0;
+    padding-bottom: 10px;
+    padding-inline: 16px;
 }
 
 .custom-search {
     --border-radius: 16px;
-    --placeholder-color: var(--ion-color-medium);
-    --background: rgba(var(--ion-color-dark-rgb), 0.5);
+    --placeholder-color: var(--slide-secondary-text);
+    --background: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.1);
     --color: var(--ion-text-color);
-    --icon-color: var(--ion-color-primary);
+    --icon-color: var(--slide-button-background);
     padding: 0;
     margin: 0;
     transition: transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     &:focus-within {
-        transform: scale(1.02);
+        transform: scale(1.01);
+        --icon-color: var(--slide-button-background);
+        box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.5);
     }
 }
 
 .artist-card {
     margin: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    /* Corrección: Glassmorphism real usando RGB vars */
+    background: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.08);
     backdrop-filter: blur(10px);
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
     height: calc(100% - 24px);
 
     &:hover {
         transform: translateY(-8px);
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-        background: rgba(var(--ion-color-primary-rgb), 0.1);
+        border-color: var(--slide-button-background);
+        /* Tinte sutil del color del tema al hacer hover */
+        background: linear-gradient(to bottom right,
+                rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.12),
+                rgba(var(--ion-color-primary-rgb), 0.15));
     }
 }
 
@@ -66,7 +82,8 @@ ion-content {
     top: 12px;
     right: 12px;
     background: rgba(0, 0, 0, 0.7);
-    color: var(--ion-color-primary);
+    color: var(--slide-button-background);
+    /* Color de tema */
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -75,12 +92,14 @@ ion-content {
     align-items: center;
     gap: 5px;
     backdrop-filter: blur(4px);
+    border: 1px solid color-mix(in srgb, var(--slide-button-background), transparent 80%);
 }
 
 ion-card-title {
     font-weight: 800;
     font-size: 1.4rem;
-    color: var(--ion-color-light);
+    color: var(--slide-text-color);
+    /* Color de texto del tema */
 }
 
 .genres-list {
@@ -90,11 +109,16 @@ ion-card-title {
     margin-bottom: 15px;
 
     ion-badge {
+        --background: var(--slide-button-background);
+        /* Background del tema */
+        --color: var(--slide-button-text-color);
+        /* Texto contraste del tema */
         --padding-start: 10px;
         --padding-end: 10px;
         font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        border-radius: 4px;
     }
 }
 
@@ -102,11 +126,11 @@ ion-card-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--ion-color-medium);
+    color: var(--slide-secondary-text);
     font-size: 0.9rem;
 
     ion-icon {
-        color: var(--ion-color-primary);
+        color: var(--slide-button-background);
     }
 }
 
@@ -116,60 +140,24 @@ ion-card-title {
 
     ion-icon {
         font-size: 4rem;
-        color: var(--ion-color-medium);
+        color: var(--slide-secondary-text);
         margin-bottom: 16px;
         opacity: 0.5;
     }
 
     p {
         font-size: 1.2rem;
-        color: var(--ion-color-medium);
+        color: var(--slide-secondary-text);
         margin-bottom: 24px;
     }
 }
 
 .skeleton-card {
     height: 300px;
+    --background: rgba(255, 255, 255, 0.05);
 
     .skeleton-img {
         width: 100%;
         height: 180px;
-    }
-}
-
-// ============================================
-// THEME SPECIFIC SEARCH STYLES
-// ============================================
-
-body.pirate-theme {
-    .search-container {
-        background: rgba(0, 0, 0, 0.95);
-        border-bottom: 2px solid #ffd700;
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-    }
-
-    .custom-search {
-        --background: #1a1a1a;
-        --color: #ffd700;
-        --icon-color: #ffd700;
-        --placeholder-color: #8a7a00;
-
-        ion-icon {
-            color: #ffd700 !important;
-        }
-    }
-}
-
-body.ocean-theme {
-    .search-container {
-        background: rgba(9, 18, 54, 0.9);
-        border-bottom: 1px solid rgba(79, 172, 254, 0.3);
-    }
-}
-
-body.sunset-theme {
-    .search-container {
-        background: rgba(45, 19, 44, 0.9);
-        border-bottom: 1px solid rgba(219, 75, 94, 0.3);
     }
 }

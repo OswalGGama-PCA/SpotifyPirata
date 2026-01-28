@@ -28,7 +28,7 @@ import {
 @Component({
   selector: 'app-intro',
   templateUrl: './intro.page.html',
-  styleUrls: ['./intro.simple.page.scss'],
+  styleUrls: ['./intro.page.scss'],
   standalone: true,
   imports: [
     IonContent, 
@@ -224,9 +224,9 @@ export class IntroPage implements OnInit, AfterViewInit {
 
         if (Math.abs(ev.deltaX) > 80) {
           if (ev.deltaX > 0) {
-            this.prevWithAnimation();
+            this.prev();
           } else {
-            this.nextWithAnimation();
+            this.next();
           }
         }
       }
@@ -239,8 +239,9 @@ export class IntroPage implements OnInit, AfterViewInit {
    * Botón para ir al siguiente slide.
    */
   next() {
-    if (this.currentIndex < this.slides.length - 1 && !this.isAnimating) {
-      this.nextWithAnimation();
+    if (this.currentIndex < this.slides.length - 1) {
+      this.currentIndex++;
+      this.announceSlide();
     }
   }
 
@@ -248,113 +249,30 @@ export class IntroPage implements OnInit, AfterViewInit {
    * Botón para volver al slide anterior.
    */
   prev() {
-    if (this.currentIndex > 0 && !this.isAnimating) {
-      this.prevWithAnimation();
-    }
-  }
-
-  private nextWithAnimation() {
-    if (this.currentIndex >= this.slides.length - 1 || this.isAnimating) return;
-    
-    this.isAnimating = true;
-    const currentSlide = this.slidesWrapper?.nativeElement.querySelector('.slide.active');
-    if (currentSlide) {
-      const animation = this.animationCtrl.create()
-        .addElement(currentSlide)
-        .duration(300)
-        .fromTo('transform', 'translateX(0)', 'translateX(-100%)')
-        .fromTo('opacity', '1', '0');
-      
-      animation.play();
-    }
-    
-    setTimeout(() => {
-      this.currentIndex++;
-      this.playEntranceAnimation();
-      this.isAnimating = false;
-    }, 150);
-  }
-
-  private prevWithAnimation() {
-    if (this.currentIndex <= 0 || this.isAnimating) return;
-    
-    this.isAnimating = true;
-    const currentSlide = this.slidesWrapper?.nativeElement.querySelector('.slide.active');
-    if (currentSlide) {
-      const animation = this.animationCtrl.create()
-        .addElement(currentSlide)
-        .duration(300)
-        .fromTo('transform', 'translateX(0)', 'translateX(100%)')
-        .fromTo('opacity', '1', '0');
-      
-      animation.play();
-    }
-    
-    setTimeout(() => {
+    if (this.currentIndex > 0) {
       this.currentIndex--;
-      this.playEntranceAnimation();
-      this.isAnimating = false;
-    }, 150);
-  }
-
-  private playEntranceAnimation() {
-    const run = () => {
-      const newSlide = this.slidesWrapper?.nativeElement.querySelector('.slide.active');
-      if (newSlide) {
-        const slideAnimation = this.animationCtrl.create()
-          .addElement(newSlide)
-          .duration(450)
-          .fromTo('transform', 'translateY(20px) scale(0.95)', 'translateY(0) scale(1)')
-          .fromTo('opacity', '0', '1');
-
-        slideAnimation.play();
-
-        const img = newSlide.querySelector('img');
-        if (img) {
-          const imgAnim = this.animationCtrl.create()
-            .addElement(img)
-            .duration(700)
-            .easing('cubic-bezier(.22,.9,.3,1)')
-            .fromTo('transform', 'translateY(12px) scale(0.98)', 'translateY(0) scale(1)')
-            .fromTo('opacity', '0', '1');
-          imgAnim.play();
-        }
-      }
-
-      // Accessibility: announce and move focus
       this.announceSlide();
-      setTimeout(() => this.focusDot(this.currentIndex), 80);
-    };
-
-    if (this.prefersReducedMotion) {
-      run();
-    } else {
-      setTimeout(run, 50);
     }
   }
 
+  // Métodos simplificados eliminando animaciones JS complejas que causan conflictos
+  // Las transiciones ahora se manejan puramente via CSS en intro.page.scss
+  
+  /**
+   * Navega directamente a un slide específico (para los dots)
+   */
+  goToSlide(index: number) {
+    if (index >= 0 && index < this.slides.length) {
+      this.currentIndex = index;
+      this.announceSlide();
+    }
+  }
 
   /**
    * Navega al Home y marca la intro como vista
-   * @returns Promise<void>
    */
   async goHome() {
     this.isLoading = true;
-    
-    // Desenfocar cualquier elemento activo
-    (document.activeElement as HTMLElement)?.blur();
-    
-    // Animación de salida
-    const content = document.querySelector('ion-content');
-    if (content) {
-      const animation = this.animationCtrl.create()
-        .addElement(content)
-        .duration(400)
-        .fromTo('opacity', '1', '0')
-        .fromTo('transform', 'translateY(0)', 'translateY(-30px)');
-      
-      await animation.play();
-    }
     
     // Guardar que vio la intro y navegar (User Specific)
     const user = this.authService.currentUser;
@@ -362,44 +280,23 @@ export class IntroPage implements OnInit, AfterViewInit {
       const key = `introSeen_${user.id}`;
       await this.storageService.set(key, true);
     } else {
-      console.warn('No user found when creating storage key, falling back to global key');
       await this.storageService.set('introSeen', true);
     }
 
-    // Navegar a /menu/home (la nueva ruta con el layout de menú)
+    // Navegar a /menu/home
     this.router.navigate(['/menu/home'], {
       replaceUrl: true
     });
   }
 
-  /**
-   * Se ejecuta cuando la imagen del slide carga correctamente.
-   */
   onImageLoad() {
     this.imageLoaded = true;
     this.imageError = false;
-    
-    // Animación sutil al cargar la imagen
-    const image = this.slidesWrapper?.nativeElement.querySelector('.slide.active img');
-    if (image) {
-      const animation = this.animationCtrl.create()
-        .addElement(image)
-        .duration(500)
-        .fromTo('opacity', '0', '1')
-        .fromTo('transform', 'scale(1.05)', 'scale(1)');
-      
-      animation.play();
-    }
   }
 
-  /**
-   * Maneja errores de carga de imágenes
-   * Muestra un placeholder o ícono de respaldo
-   */
   onImageError() {
     this.imageError = true;
     this.imageLoaded = false;
-    console.warn(`Error loading image for slide: ${this.slides[this.currentIndex]?.title}`);
   }
 
   async skipToEnd() {
@@ -408,29 +305,10 @@ export class IntroPage implements OnInit, AfterViewInit {
 
   async restartIntro() {
     this.currentIndex = 0;
-    this.playEntranceAnimation();
-    
-    // Resetear flag para que si recarga vuelva a ver la intro
-    const user = this.authService.currentUser;
-    if (user) {
-      await this.storageService.remove(`introSeen_${user.id}`);
-    }
-    await this.storageService.remove('introSeen');
   }
 
   toggleTheme() {
     this.themeService.toggleTheme();
-  }
-
-  goToSlide(index: number) {
-    if (index >= 0 && index < this.slides.length && index !== this.currentIndex) {
-      this.currentIndex = index;
-      this.playEntranceAnimation();
-
-      // Accessibility: announce and focus the corresponding dot
-      this.announceSlide();
-      setTimeout(() => this.focusDot(this.currentIndex), 60);
-    }
   }
 
   private announceSlide() {

@@ -22,6 +22,9 @@ body {
   --slide-secondary-text: #b3b3b3;
   --slide-button-background: #1DB954;
   --slide-button-text-color: #000000;
+
+  --header-background: #1DB954;
+  --header-text-color: #ffffff;
 }
 
 // Light Theme
@@ -36,6 +39,9 @@ body.light-theme {
   --slide-secondary-text: #535353;
   --slide-button-background: #1DB954;
   --slide-button-text-color: #ffffff;
+
+  --header-background: #1DB954;
+  --header-text-color: #ffffff;
 }
 
 // Dark Theme (Explicit)
@@ -50,6 +56,9 @@ body.dark-theme {
   --slide-secondary-text: #b3b3b3;
   --slide-button-background: #1DB954;
   --slide-button-text-color: #000000;
+
+  --header-background: #1DB954;
+  --header-text-color: #ffffff;
 }
 
 // Tema Ocean (Azul)
@@ -64,6 +73,9 @@ body.ocean-theme {
   --slide-secondary-text: #a0a0a0;
   --slide-button-background: #4facfe;
   --slide-button-text-color: #ffffff;
+
+  --header-background: #1E215D;
+  --header-text-color: #ffffff;
 }
 
 // Tema Sunset (Atardecer)
@@ -78,6 +90,9 @@ body.sunset-theme {
   --slide-secondary-text: #ffe0e0;
   --slide-button-background: #db4b5e;
   --slide-button-text-color: #ffffff;
+
+  --header-background: #561e38;
+  --header-text-color: #ffffff;
 }
 
 // Tema Forest (Bosque)
@@ -92,6 +107,9 @@ body.forest-theme {
   --slide-secondary-text: #d0f0e0;
   --slide-button-background: #2ecc71;
   --slide-button-text-color: #ffffff;
+
+  --header-background: #203a43;
+  --header-text-color: #ffffff;
 }
 
 // Tema Pirata
@@ -106,4 +124,8 @@ body.pirate-theme {
   --slide-secondary-text: #d4af37;
   --slide-button-background: #cc0000;
   --slide-button-text-color: #ffffff;
+
+  /* Header Vars */
+  --header-background: #cc0000;
+  --header-text-color: #ffd700;
 }

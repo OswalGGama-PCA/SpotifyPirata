@@ -148,7 +148,8 @@ export class AuthService {
       await Promise.all([
         this.storage.remove(this.TOKEN_KEY),
         this.storage.remove(this.REFRESH_TOKEN_KEY),
-        this.storage.remove(this.USER_KEY)
+        this.storage.remove(this.USER_KEY),
+        this.storage.remove('login')
       ]);
 
       // Actualizar estado
@@ -243,6 +244,7 @@ export class AuthService {
       await Promise.all([
         this.storage.set(this.TOKEN_KEY, response.token),
         this.storage.set(this.USER_KEY, response.user),
+        this.storage.set('login', true),
         response.refreshToken 
           ? this.storage.set(this.REFRESH_TOKEN_KEY, response.refreshToken)
           : Promise.resolve()
@@ -260,14 +262,17 @@ export class AuthService {
   /**
    * Maneja errores de autenticación
    */
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  private handleError(error: any): Observable<never> {
     let errorMessage = 'Ha ocurrido un error';
 
-    if (error.error instanceof ErrorEvent) {
-      // Error del cliente
+    if (error instanceof Error) {
+      // Error nativo de JS (lanzado manualmente en simulaciones)
+      errorMessage = error.message;
+    } else if (error.error instanceof ErrorEvent) {
+      // Error del cliente Angular
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del servidor
+      // Error del servidor HTTP
       switch (error.status) {
         case 401:
           errorMessage = 'Credenciales inválidas';

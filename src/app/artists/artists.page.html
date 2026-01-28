@@ -1,10 +1,14 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="search-toolbar">
+    <div class="search-container">
+      <ion-searchbar placeholder="Buscar artistas o géneros..." (ionInput)="handleSearch($event)" animated="true"
+        class="custom-search">
+      </ion-searchbar>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
-  <!-- Barra de búsqueda superior -->
-  <div class="search-container">
-    <ion-searchbar placeholder="Buscar artistas o géneros..." (ionInput)="handleSearch($event)" animated="true"
-      class="custom-search">
-    </ion-searchbar>
-  </div>
 
   <!-- Estado de carga (Esqueletos) -->
   <div *ngIf="isLoading">
@@ -36,8 +40,8 @@
     <!-- Grid de Artistas -->
     <ion-grid>
       <ion-row>
-        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let artist of filteredArtists">
-          <ion-card class="artist-card">
+        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let artist of filteredArtists; trackBy: trackByArtist">
+          <ion-card class="artist-card" button="true" (click)="goToArtistMusic(artist.name)">
             <div class="card-image-wrapper">
               <img [src]="artist.image || 'assets/default-artist.png'" [alt]="artist.name" />
               <div class="popularity-badge">

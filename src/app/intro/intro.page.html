@@ -1,69 +1,74 @@
 <ion-content [fullscreen]="true">
   <!-- Sección de Progreso Fija en el Tope -->
   <div class="progress-section">
-    <ion-progress-bar class="intro-progress" [value]="getProgressValue()"></ion-progress-bar>
     <div class="progress-info">
       <div class="step-counter">
-        Paso <strong>{{ currentIndex + 1 }}</strong> de {{ slides.length }}
+        Paso <strong>{{ currentIndex + 1 }}</strong> <span class="text-muted">/ {{ slides.length }}</span>
       </div>
       <div class="percentage-badge">
-        {{ (getProgressValue() * 100) | number:'1.0-0' }}% completado
+        {{ (getProgressValue() * 100) | number:'1.0-0' }}%
       </div>
+    </div>
+    <div class="progress-track">
+      <ion-progress-bar class="intro-progress" [value]="getProgressValue()"></ion-progress-bar>
     </div>
   </div>
 
   <!-- Contenido de Intro -->
   <div class="intro-shell ion-padding" #slidesWrapper>
 
-    <!-- Slides Dinámicos -->
-    <ng-container *ngFor="let slide of slides; let i = index">
-      <div class="card-wrap slide ion-margin-bottom" [class.active]="i === currentIndex"
-        [style.display]="i === currentIndex ? 'block' : 'none'" role="region" [attr.aria-label]="slide.title">
+    <!-- Contenedor en Stack para Transiciones Suaves -->
+    <div class="slides-stack">
+      <ng-container *ngFor="let slide of slides; let i = index">
+        <div class="card-wrap slide" [class.active]="i === currentIndex" [class.prev]="i < currentIndex"
+          [class.next]="i > currentIndex" aria-role="region" [attr.aria-label]="slide.title">
 
-        <!-- Visualización de la Diapositiva -->
-        <div class="card-image" [class.has-img]="slide.img">
-          <img *ngIf="slide.img" [src]="slide.img" [alt]="slide.title" (load)="onImageLoad()" (error)="onImageError()">
-        </div>
+          <!-- Visualización de la Diapositiva -->
+          <div class="card-image" [class.has-img]="slide.img">
+            <img *ngIf="slide.img" [src]="slide.img" [alt]="slide.title" (load)="onImageLoad()"
+              (error)="onImageError()">
+          </div>
 
-        <!-- Contenido de Texto -->
-        <div class="card-body ion-text-center">
-          <h2 class="ion-text-wrap">{{ slide.title }}</h2>
-          <p class="ion-text-wrap">{{ slide.text }}</p>
+          <!-- Contenido de Texto -->
+          <div class="card-body ion-text-center">
+            <h2 class="ion-text-wrap">{{ slide.title }}</h2>
+            <p class="ion-text-wrap">{{ slide.text }}</p>
 
-          <!-- Navegación de Puntos -->
-          <nav class="dots ion-margin-top" aria-label="Navegación de diapositivas">
-            <button class="dot" *ngFor="let s of slides; let k = index" [class.active]="k === currentIndex"
-              (click)="goToSlide(k)" [attr.aria-label]="'Ir a ' + s.title"></button>
-          </nav>
+            <!-- Navegación de Puntos -->
+            <nav class="dots ion-margin-top" aria-label="Navegación de diapositivas">
+              <button class="dot" *ngFor="let s of slides; let k = index" [class.active]="k === currentIndex"
+                (click)="goToSlide(k)" [attr.aria-label]="'Ir a ' + s.title"></button>
+            </nav>
 
-          <!-- Acciones Principales -->
-          <div class="actions ion-margin-top">
-            <ion-button expand="block" (click)="i === slides.length - 1 ? goHome() : next()" class="cta-button"
-              aria-label="Comenzar">
-              {{ i === slides.length - 1 ? 'Empezar ahora' : 'Siguiente' }}
-              <ion-icon slot="end"
-                [name]="i === slides.length - 1 ? 'rocket-outline' : 'arrow-forward-outline'"></ion-icon>
-            </ion-button>
+            <!-- Acciones Principales -->
+            <div class="actions ion-margin-top">
+              <ion-button expand="block" (click)="i === slides.length - 1 ? goHome() : next()" class="cta-button"
+                aria-label="Comenzar">
+                {{ i === slides.length - 1 ? 'Empezar ahora' : 'Siguiente' }}
+                <ion-icon slot="end"
+                  [name]="i === slides.length - 1 ? 'rocket-outline' : 'arrow-forward-outline'"></ion-icon>
+              </ion-button>
 
-            <!-- Botón Ver Nuevamente / Saltar -->
-            <ion-button fill="clear" expand="block" (click)="i === slides.length - 1 ? restartIntro() : skipToEnd()"
-              class="skip-button"
-              [attr.aria-label]="i === slides.length - 1 ? 'Reiniciar introducción' : 'Saltar introducción'">
-              {{ i === slides.length - 1 ? 'Ver nuevamente' : 'Saltar Intro' }}
-            </ion-button>
+              <!-- Botón Ver Nuevamente / Saltar -->
+              <ion-button fill="clear" expand="block" (click)="i === slides.length - 1 ? restartIntro() : skipToEnd()"
+                class="skip-button"
+                [attr.aria-label]="i === slides.length - 1 ? 'Reiniciar introducción' : 'Saltar introducción'">
+                {{ i === slides.length - 1 ? 'Ver nuevamente' : 'Saltar Intro' }}
+              </ion-button>
+            </div>
           </div>
         </div>
-      </div>
-    </ng-container>
+      </ng-container>
 
-    <!-- Botón Flotante de Tema -->
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="theme-fab bottom-right">
-      <ion-fab-button (click)="toggleTheme()" size="small">
-        <ion-icon name="color-palette-outline"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+      <!-- Botón Flotante de Tema -->
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="theme-fab bottom-right">
+        <ion-fab-button (click)="toggleTheme()" size="small">
+          <ion-icon name="color-palette-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
 
-    <!-- Feedback para Lectura de Pantalla -->
-    <div class="visually-hidden" aria-live="polite">{{ announceMessage }}</div>
+      <!-- Feedback para Lectura de Pantalla -->
+      <div class="visually-hidden" aria-live="polite">{{ announceMessage }}</div>
+    </div>
   </div>
 </ion-content>

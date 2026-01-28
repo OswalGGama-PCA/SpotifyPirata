@@ -2,7 +2,7 @@
   <!-- Menu Lateral -->
   <ion-menu contentId="main-content" type="overlay">
     <ion-header>
-      <ion-toolbar color="primary">
+      <ion-toolbar>
         <ion-title>Menú</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -30,6 +30,20 @@
         </ion-menu-toggle>
 
         <ion-menu-toggle [autoHide]="false">
+          <ion-item button (click)="navigateToMusic()" [class.active-item]="currentPage === 'music'" detail="false">
+            <ion-icon slot="start" name="musical-notes-outline"></ion-icon>
+            <ion-label>Música</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle [autoHide]="false">
+          <ion-item button (click)="navigateToLibrary()" [class.active-item]="currentPage === 'library'" detail="false">
+            <ion-icon slot="start" name="heart-outline"></ion-icon>
+            <ion-label>Mi Tesoro</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle [autoHide]="false">
           <ion-item button (click)="verIntro()" detail="false">
             <ion-icon slot="start" name="play-circle-outline"></ion-icon>
             <ion-label>Ver la Intro</ion-label>
@@ -42,6 +56,13 @@
         </ion-item>
 
         <!-- Configuración y Logout -->
+        <ion-menu-toggle [autoHide]="false">
+          <ion-item button (click)="navigateToProfile()" [class.active-item]="currentPage === 'profile'" detail="false">
+            <ion-icon slot="start" name="person-circle-outline"></ion-icon>
+            <ion-label>Mi Camarote</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
         <ion-menu-toggle [autoHide]="false">
           <ion-item button detail="false">
             <ion-icon slot="start" name="settings-outline"></ion-icon>
@@ -63,7 +84,7 @@
   <div class="ion-page" id="main-content">
     <!-- Header con Toolbar de Navegación -->
     <ion-header>
-      <ion-toolbar color="primary">
+      <ion-toolbar>
         <!-- Botón de menú (hamburguesa) -->
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>

@@ -1,0 +1,66 @@
+<ion-content>
+  <div class="header-search">
+    <ion-title class="page-title ion-padding-top ion-padding-horizontal">Explorar</ion-title>
+    <div class="search-wrapper ion-padding">
+      <ion-searchbar placeholder="¿Qué quieres escuchar?" (ionInput)="handleSearch($event)" animated="true"
+        inputmode="search" [debounce]="500">
+      </ion-searchbar>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <ion-list *ngIf="isLoading" class="track-list">
+    <ion-item *ngFor="let i of [1,2,3,4,5,6]" lines="none" class="track-item">
+      <ion-thumbnail slot="start">
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-thumbnail>
+      <ion-label>
+        <h3><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></h3>
+        <p><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Results List -->
+  <ion-list *ngIf="!isLoading" class="track-list">
+    <ion-item *ngFor="let track of tracks" lines="none" class="track-item"
+      [class.playing]="currentTrack?.id === track.id">
+
+      <!-- Album Art -->
+      <ion-thumbnail slot="start" class="album-art">
+        <img [src]="track.album.cover_medium" [alt]="track.title">
+        <div class="overlay" (click)="togglePlay(track)">
+          <ion-icon [name]="(currentTrack?.id === track.id && isPlaying) ? 'pause' : 'play'"></ion-icon>
+        </div>
+      </ion-thumbnail>
+
+      <!-- Info -->
+      <ion-label class="track-info" (click)="togglePlay(track)">
+        <h3 class="track-title" [class.active-text]="currentTrack?.id === track.id">{{ track.title }}</h3>
+        <p class="track-artist">{{ track.artist.name }}</p>
+      </ion-label>
+
+      <!-- Duration / Equalizer -->
+      <div slot="end" class="track-actions">
+        <!-- Like Button -->
+        <ion-button fill="clear" (click)="toggleFavorite($event, track)" class="like-btn">
+          <ion-icon [name]="isFavorite(track) ? 'heart' : 'heart-outline'"
+            [color]="isFavorite(track) ? 'danger' : 'medium'"></ion-icon>
+        </ion-button>
+
+        <div class="track-meta">
+          <div *ngIf="currentTrack?.id === track.id && isPlaying" class="equalizer">
+            <span></span><span></span><span></span>
+          </div>
+          <span *ngIf="!(currentTrack?.id === track.id && isPlaying)" class="duration">0:30</span>
+        </div>
+      </div>
+    </ion-item>
+
+    <!-- Empty State -->
+    <div *ngIf="tracks.length === 0 && !isLoading" class="empty-state">
+      <ion-icon name="musical-notes"></ion-icon>
+      <p>Busca tus canciones favoritas</p>
+    </div>
+  </ion-list>
+</ion-content>
