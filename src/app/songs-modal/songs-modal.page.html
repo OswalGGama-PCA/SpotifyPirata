@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>{{ artistName }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <div class="songs-container">
+    <ion-list lines="full" class="songs-list">
+      <ion-item *ngFor="let track of songs" class="song-item">
+        <ion-thumbnail slot="start" class="song-thumb">
+          <img [src]="track.image || 'assets/default-music.png'" alt="Album Art">
+        </ion-thumbnail>
+
+        <ion-label>
+          <h2 class="song-title">{{ track.name }}</h2>
+          <p class="song-album">{{ track.album }}</p>
+        </ion-label>
+
+        <div slot="end" class="song-actions">
+          <!-- Botón de Favorito -->
+          <ion-button (click)="toggleFavorite($event, track)" fill="clear" [class.favorite-btn]="true"
+            [class.is-favorite]="isFavorite(track)">
+            <ion-icon [name]="isFavorite(track) ? 'heart' : 'heart-outline'"></ion-icon>
+          </ion-button>
+
+          <!-- Botón de Play -->
+          <ion-button (click)="togglePlay(track)" fill="solid" class="play-btn">
+            <ion-icon [name]="currentTrack?.id === track.id && isPlaying ? 'pause' : 'play'"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="songs.length === 0" class="no-songs">
+      <ion-icon name="musical-notes-outline"></ion-icon>
+      <p>No se encontraron canciones para este artista.</p>
+    </div>
+
+    <!-- Opción de Ver Más -->
+    <div class="see-more-container" *ngIf="songs.length >= 5">
+      <ion-button (click)="goToMusic()" fill="clear" expand="block" class="see-more-btn">
+        Ver todas las canciones
+        <ion-icon name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

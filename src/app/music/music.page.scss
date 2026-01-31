@@ -1,257 +1,378 @@
-/* MUSIC PAGE STYLES */
+// ============================================
+// MUSIC PAGE - PLAYER DESIGN
+// ============================================
 
-ion-content {
-    --background: var(--ion-background-color);
-}
+ion-header {
+    background: var(--slide-background);
 
-.header-search {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--ion-background-color);
-    /* Fondo base sólido */
-    padding-top: 80px;
-    /* Espacio extra para separar del header global */
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.05);
-    transition: background 0.3s ease;
-}
+    ion-toolbar {
+        --background: transparent;
+        --border-width: 0;
 
-/* Glassmorphism solo si está soportado */
-@supports (backdrop-filter: blur(20px)) {
-    .header-search {
-        background: rgba(var(--ion-background-color-rgb, 18, 18, 18), 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-    }
-}
-
-.page-title {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: var(--slide-text-color);
-    margin-bottom: 24px;
-    text-align: center;
-    padding:3%
-}
-
-.search-wrapper {
-    padding-top: 8px;
-    padding-bottom: 4px;
-}
-
-ion-searchbar {
-    --border-radius: 12px;
-    --placeholder-color: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.5);
-    --background: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.08);
-    --color: var(--slide-text-color);
-    --icon-color: var(--slide-button-text-color);
-    /* Icono lupa visible */
-    --box-shadow: none;
-    padding-inline: 16px;
-    transition: transform 0.2s;
-}
-
-ion-searchbar:focus-within {
-    transform: scale(1.01);
-    --background: rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.12);
-}
-
-/* Track List */
-.track-list {
-    background: transparent;
-    padding: 8px 16px 80px;
-    /* Padding bottom extra para el scroll */
-}
-
-.track-item {
-    --background: transparent;
-    --padding-start: 0;
-    --inner-padding-end: 0;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    cursor: pointer;
-
-    /* Hover effect para desktop */
-    &:hover {
-        --background: rgba(var(--ion-text-color-rgb), 0.04);
-
-        .overlay {
-            opacity: 1;
-            /* Mostrar play button al hover */
+        ion-title {
+            font-size: var(--font-2xl);
+            font-weight: var(--font-black);
+            text-transform: uppercase;
+            letter-spacing: -1px;
         }
     }
+}
 
-    &.playing {
-        --background: rgba(var(--ion-text-color-rgb), 0.08);
-        /* Highlight si suena */
+ion-content {
+    --background: var(--slide-background);
+}
+
+// ============================================
+// SEARCH BAR STICKY
+// ============================================
+
+.search-container {
+    background: var(--slide-background);
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+}
+
+.custom-searchbar {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: #fff;
+    --placeholder-color: rgba(255, 255, 255, 0.5);
+    --icon-color: var(--slide-button-background);
+    --border-radius: var(--radius-full);
+    --box-shadow: var(--shadow-md);
+    padding: 0;
+
+    .searchbar-input-container {
+        height: 48px;
+    }
+}
+
+// ============================================
+// SONG LIST
+// ============================================
+
+.songs-container {
+    min-height: 100%;
+    padding-bottom: 100px; // Espacio para el reproductor flotante
+}
+
+.songs-list {
+    background: transparent;
+    padding: 0;
+}
+
+.song-item {
+    --background: transparent;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --inner-padding-end: 0;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: var(--transition-normal);
+
+    &:hover {
+        --background: rgba(255, 255, 255, 0.05);
+    }
+
+    &.active {
+        --background: rgba(var(--ion-color-primary-rgb, 29, 185, 84), 0.1);
 
         .track-title {
             color: var(--slide-button-background);
-            /* Color de tema */
+        }
+    }
+
+    // Número de Track
+    .track-number {
+        width: 24px;
+        text-align: center;
+        margin-right: 16px;
+
+        .number {
+            color: var(--slide-secondary-text);
+            font-size: var(--font-sm);
+            font-weight: var(--font-medium);
         }
 
-        .overlay {
+        .playing-icon {
+            color: var(--slide-button-background);
+            font-size: 20px;
+        }
+    }
+
+    // Album Art
+    .album-art {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        margin-right: 16px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+
+            ion-icon {
+                color: #fff;
+                font-size: 24px;
+            }
+        }
+
+        &:hover .play-overlay {
             opacity: 1;
-            background: rgba(0, 0, 0, 0.4);
+        }
+    }
+
+    // Texto
+    ion-label {
+        h2.track-title {
+            color: #fff;
+            font-weight: var(--font-semibold);
+            font-size: var(--font-base);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        p.track-artist {
+            color: var(--slide-secondary-text);
+            font-size: var(--font-sm);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    // Acciones
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .duration {
+            color: var(--slide-secondary-text);
+            font-size: var(--font-sm);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .favorite-btn {
+            --color: var(--slide-secondary-text);
+            --padding-start: 8px;
+            --padding-end: 8px;
+            margin: 0;
+
+            &.is-favorite {
+                --color: var(--ion-color-danger, #ef5350);
+                animation: heartbeat 0.3s ease;
+            }
+
+            &:hover {
+                --color: #fff;
+            }
         }
     }
 }
 
-/* Album Art & Overlay */
-.album-art {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
-    margin-right: 16px;
-    background: #2a2a2a;
+// ============================================
+// FLOATING PLAYER
+// ============================================
 
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+.floating-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(18, 18, 18, 0.98);
+    backdrop-filter: var(--glass-blur);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+
+    .player-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        gap: 16px;
+    }
+
+    .current-track-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0; // Para que funcione el ellipsis
+
+        .mini-cover {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            box-shadow: var(--shadow-md);
+        }
+
+        .track-details {
+            flex: 1;
+            min-width: 0;
+
+            h3 {
+                color: #fff;
+                font-size: var(--font-base);
+                font-weight: var(--font-bold);
+                margin: 0 0 4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            p {
+                color: var(--slide-secondary-text);
+                font-size: var(--font-sm);
+                margin: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+    .player-controls {
+        .play-btn {
+            --color: var(--slide-button-background);
+            --padding-start: 8px;
+            --padding-end: 8px;
+            margin: 0;
+
+            ion-icon {
+                font-size: 48px;
+            }
+
+            &:active {
+                transform: scale(0.95);
+            }
+        }
+    }
+
+    .player-actions {
+        .favorite-btn {
+            --color: var(--slide-secondary-text);
+            --padding-start: 8px;
+            --padding-end: 8px;
+            margin: 0;
+
+            &.is-favorite {
+                --color: var(--ion-color-danger, #ef5350);
+            }
+
+            ion-icon {
+                font-size: 24px;
+            }
+        }
+    }
+
+    .progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.1);
+
+        .progress-fill {
+            height: 100%;
+            background: var(--slide-button-background);
+            transition: width 0.1s linear;
+        }
     }
 }
 
-.overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    /* Oculto por defecto en desktop */
-    transition: opacity 0.2s ease;
+.player-spacer {
+    height: 80px; // Espacio para el reproductor flotante
 }
 
-ion-icon {
-    font-size: 1.5rem;
-    color: #fff;
-}
+// ============================================
+// EMPTY STATES & LOADERS
+// ============================================
 
-/* Mobile: Siempre visible overlay si es táctil? No, mejor solo play state. */
-@media (hover: none) {
-    .overlay {
-        opacity: 0;
-        /* En móvil solo visible si playing */
-    }
-
-    .track-item.playing .overlay {
-        opacity: 1;
-    }
-}
-
-/* Track Info */
-.track-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.track-title {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--slide-text-color);
-    transition: color 0.3s;
-}
-
-.track-artist {
-    color: var(--slide-secondary-text);
-    font-size: 0.85rem;
-}
-
-/* Meta info (Time & EQ) */
-.track-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.like-btn {
-    --padding-start: 8px;
-    --padding-end: 8px;
-    margin: 0;
-    height: 32px;
-}
-
-.track-meta {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    min-width: 40px;
-}
-
-.duration {
-    font-size: 0.8rem;
-    color: var(--slide-secondary-text);
-    font-variant-numeric: tabular-nums;
-}
-
-/* Equalizer Animation */
-.equalizer {
-    display: flex;
-    gap: 2px;
-    align-items: flex-end;
-    height: 16px;
-    width: 16px;
-}
-
-.equalizer span {
-    width: 3px;
-    background: var(--slide-button-background);
-    animation: eq 1s ease-in-out infinite;
-}
-
-.equalizer span:nth-child(1) {
-    animation-duration: 0.8s;
-    height: 60%;
-}
-
-.equalizer span:nth-child(2) {
-    animation-duration: 0.9s;
-    height: 30%;
-}
-
-.equalizer span:nth-child(3) {
-    animation-duration: 0.7s;
-    height: 50%;
-}
-
-@keyframes eq {
-
-    0%,
-    100% {
-        height: 20%;
-    }
-
-    50% {
-        height: 100%;
-    }
-}
-
-/* Empty State */
 .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
-    color: var(--slide-secondary-text);
+    margin-top: 100px;
+    opacity: 0.6;
+    padding: 40px;
 
     ion-icon {
-        font-size: 4rem;
+        font-size: 64px;
         margin-bottom: 16px;
-        color: var(--slide-button-background);
-        /* Icono del color de tema */
-        opacity: 0.5;
+        color: var(--slide-secondary-text);
     }
 
     p {
-        font-size: 1.1rem;
+        font-size: var(--font-lg);
+        color: var(--slide-secondary-text);
+        text-align: center;
+    }
+}
+
+.loader-container {
+    padding: 20px;
+
+    .skeleton-item {
+        margin-bottom: 12px;
+        --background: transparent;
+
+        ion-thumbnail {
+            width: 48px;
+            height: 48px;
+            --border-radius: var(--radius-md);
+        }
+    }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

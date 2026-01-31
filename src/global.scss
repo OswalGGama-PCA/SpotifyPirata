@@ -36,37 +36,72 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
-/* Small toast style for theme feedback */
-.theme-toast {
-  --background: #1DB954;
-  --color: #000;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: 700;
-  font-size: 14px;
+// ----------------------------------------------------------------------------
+// GLOBAL SCROLLBARS (Spotify Style)
+// ----------------------------------------------------------------------------
+::-webkit-scrollbar {
+  width: 12px;
 }
 
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    background-clip: content-box;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// THEME & BASE STYLES
+// ----------------------------------------------------------------------------
 body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background-color: #121212;
+  font-family: var(--font-primary);
+  background-color: var(--ion-background-color);
+  color: var(--ion-text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 // Global form improvements
 ion-input::part(native) {
-  caret-color: var(--slide-button-background, #1DB954);
+  caret-color: var(--ion-color-primary);
+  font-weight: 500;
 }
 
 ion-item {
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: var(--transition-normal);
+  --border-radius: var(--radius-md);
 }
 
 // Custom loading spinner
 .custom-loading {
-  --background: rgba(18, 18, 18, 0.95);
-  --spinner-color: #1DB954;
+  --background: rgba(18, 18, 18, 0.8);
+  --spinner-color: var(--ion-color-primary);
 
   .loading-wrapper {
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    box-shadow: var(--shadow-xl);
   }
+}
+
+// Small toast style for theme feedback
+.theme-toast {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: var(--radius-full);
+  --padding-start: var(--spacing-lg);
+  --padding-end: var(--spacing-lg);
+  font-weight: 700;
+  font-size: var(--font-sm);
+  box-shadow: var(--shadow-glow);
 }

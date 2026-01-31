@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  IonContent, 
-  IonTitle, 
+import {
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
   IonSearchbar,
   IonList,
   IonItem,
@@ -26,8 +28,10 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./music.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
-    IonTitle, 
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
     IonSearchbar,
     IonList,
     IonItem,
@@ -36,7 +40,7 @@ import { ActivatedRoute } from '@angular/router';
     IonIcon,
     IonSkeletonText,
     IonButton,
-    CommonModule, 
+    CommonModule,
     FormsModule
   ]
 })
@@ -44,7 +48,7 @@ export class MusicPage implements OnInit {
   tracks: any[] = [];
   searchTerm: string = '';
   isLoading: boolean = false;
-  
+
   // Audio Player State
   currentTrack: any = null;
   isPlaying: boolean = false;
@@ -54,8 +58,9 @@ export class MusicPage implements OnInit {
     private deezerService: DeezerService,
     private route: ActivatedRoute,
     private favoritesService: FavoritesService
-  ) { 
+  ) {
     addIcons({ play, pause, musicalNotes, timeOutline, searchOutline, heart, heartOutline });
+    console.log('MusicPage initialized');
   }
 
   isFavorite(track: any): boolean {
@@ -88,10 +93,10 @@ export class MusicPage implements OnInit {
 
   search(query: string) {
     if (!query || query.length < 2) return;
-    
+
     this.isLoading = true;
     this.searchTerm = query;
-    
+
     this.deezerService.searchTracks(query).subscribe({
       next: (data) => {
         this.tracks = data;
@@ -121,7 +126,7 @@ export class MusicPage implements OnInit {
     if (this.audio) {
       this.audio.pause();
     }
-    
+
     this.currentTrack = track;
     this.audio.src = track.preview;
     this.audio.load();
@@ -132,5 +137,16 @@ export class MusicPage implements OnInit {
     this.audio.onended = () => {
       this.isPlaying = false;
     };
+  }
+
+  formatDuration(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  getProgress(): number {
+    if (!this.audio || !this.audio.duration) return 0;
+    return (this.audio.currentTime / this.audio.duration) * 100;
   }
 }

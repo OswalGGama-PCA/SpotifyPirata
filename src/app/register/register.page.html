@@ -13,33 +13,34 @@
     <!-- Register Form -->
     <form class="register-form" [formGroup]="registerForm" (ngSubmit)="register()">
 
-      <!-- Nombre Field -->
+      <!-- Name Field -->
       <div class="form-field">
         <ion-item lines="none" class="input-wrapper"
-          [class.has-error]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
+          [class.has-error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
           <ion-icon name="person-outline" slot="start"></ion-icon>
-          <ion-input type="text" label="Nombre" labelPlacement="floating" placeholder="Tu nombre"
-            formControlName="nombre" autocomplete="given-name">
+          <ion-input type="text" label="Nombre" labelPlacement="floating" placeholder="Tu nombre" formControlName="name"
+            autocomplete="given-name">
           </ion-input>
         </ion-item>
-        <div class="field-error" *ngIf="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
-          <small *ngIf="registerForm.get('nombre')?.errors?.['required']">El nombre es obligatorio</small>
-          <small *ngIf="registerForm.get('nombre')?.errors?.['minlength']">Mínimo 2 caracteres</small>
+        <div class="field-error" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+          <small *ngIf="registerForm.get('name')?.errors?.['required']">El nombre es obligatorio</small>
+          <small *ngIf="registerForm.get('name')?.errors?.['minlength']">Mínimo 2 caracteres</small>
         </div>
       </div>
 
-      <!-- Apellido Field -->
+      <!-- Last Name Field -->
       <div class="form-field">
         <ion-item lines="none" class="input-wrapper"
-          [class.has-error]="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched">
+          [class.has-error]="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched">
           <ion-icon name="person-outline" slot="start"></ion-icon>
           <ion-input type="text" label="Apellido" labelPlacement="floating" placeholder="Tu apellido"
-            formControlName="apellido" autocomplete="family-name">
+            formControlName="last_name" autocomplete="family-name">
           </ion-input>
         </ion-item>
-        <div class="field-error" *ngIf="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched">
-          <small *ngIf="registerForm.get('apellido')?.errors?.['required']">El apellido es obligatorio</small>
-          <small *ngIf="registerForm.get('apellido')?.errors?.['minlength']">Mínimo 2 caracteres</small>
+        <div class="field-error"
+          *ngIf="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched">
+          <small *ngIf="registerForm.get('last_name')?.errors?.['required']">El apellido es obligatorio</small>
+          <small *ngIf="registerForm.get('last_name')?.errors?.['minlength']">Mínimo 2 caracteres</small>
         </div>
       </div>
 
@@ -70,13 +71,24 @@
         </ion-item>
         <div class="field-error" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
           <small *ngIf="registerForm.get('password')?.errors?.['required']">La contraseña es obligatoria</small>
-          <small *ngIf="registerForm.get('password')?.errors?.['minlength']">Mínimo 8 caracteres para mayor
-            seguridad</small>
+          <small *ngIf="registerForm.get('password')?.errors?.['minlength']">Mínimo 8 caracteres</small>
         </div>
-        <!-- Password Strength Indicator -->
-        <div class="password-strength" *ngIf="registerForm.get('password')?.value">
-          <div class="strength-bar" [class]="getPasswordStrength()"></div>
-          <small class="strength-text">{{ getPasswordStrengthText() }}</small>
+      </div>
+
+      <!-- Password Confirmation Field -->
+      <div class="form-field">
+        <ion-item lines="none" class="input-wrapper"
+          [class.has-error]="(registerForm.get('password_confirmation')?.invalid || registerForm.hasError('mismatch')) && registerForm.get('password_confirmation')?.touched">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input type="password" label="Confirmar Contraseña" labelPlacement="floating"
+            placeholder="Repite tu contraseña" formControlName="password_confirmation">
+            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
+        </ion-item>
+        <div class="field-error" *ngIf="registerForm.get('password_confirmation')?.touched">
+          <small *ngIf="registerForm.get('password_confirmation')?.errors?.['required']">La confirmación es
+            obligatoria</small>
+          <small *ngIf="registerForm.hasError('mismatch')">Las contraseñas no coinciden</small>
         </div>
       </div>
 
@@ -86,7 +98,6 @@
         <span *ngIf="!isLoading">Crear Cuenta</span>
       </ion-button>
     </form>
-
 
     <!-- Footer -->
     <footer class="register-footer">

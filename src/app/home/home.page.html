@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true">
-  <!-- Header Section Optimizado -->
+  <!-- Header Section -->
   <div class="header-section">
     <div class="header-content">
       <span class="pirate-decoration" *ngIf="currentTheme === 'pirate'">☠️</span>
@@ -15,7 +15,7 @@
     <div class="header-actions">
       <ion-button class="reload-btn" size="small" fill="outline" (click)="reloadArtists()" [disabled]="isLoading">
         <ion-icon name="refresh-outline" slot="start"></ion-icon>
-        Recargar Artistas
+        Recargar Lista
       </ion-button>
     </div>
   </div>
@@ -26,24 +26,23 @@
   </div>
 
   <!-- Contenido Principal con Swiper -->
-  <swiper-container *ngIf="artists.length > 0; else skeletonTpl" [slidesPerView]="1" [spaceBetween]="0"
+  <swiper-container *ngIf="!isLoading && artists.length > 0; else skeletonTpl" [slidesPerView]="1" [spaceBetween]="0"
     [effect]="'cards'" [grabCursor]="true" class="artist-swiper" (realindexchange)="onSlideChange($event)">
     <swiper-slide *ngFor="let artist of artists">
-      <div class="artist-card">
-        <div class="image-container">
+      <div class="artist-modern-card glass-card ripple-effect" (click)="showSongsByArtist(artist)">
+        <!-- Ripple Effect -->
+        <ion-ripple-effect></ion-ripple-effect>
+
+        <div class="card-image-wrap">
           <img [src]="artist.img" [alt]="artist.title">
-          <div class="image-overlay"></div>
-        </div>
-        <div class="card-content">
-          <h2 class="artist-name">{{ artist.title }}</h2>
-          <div class="genre-badge">{{ artist.genre }}</div>
-          <p class="artist-description">{{ artist.description }}</p>
-          <div class="card-footer">
-            <span class="country-tag" *ngIf="artist.country">
-              <ion-icon name="location-outline"></ion-icon>
-              {{ artist.country }}
-            </span>
+          <div class="image-overlay-gradient"></div>
+          <div class="play-indicator">
+            <ion-icon name="play"></ion-icon>
           </div>
+        </div>
+        <div class="card-info">
+          <h3 class="name">{{ artist.title }}</h3>
+          <span class="genre">{{ artist.genre }}</span>
         </div>
       </div>
     </swiper-slide>
@@ -52,14 +51,13 @@
   <!-- Skeleton Loading Profesional -->
   <ng-template #skeletonTpl>
     <div class="skeleton-container">
-      <div class="skeleton-card" *ngFor="let item of [1,2]">
-        <ion-skeleton-text animated class="skeleton-image" style="height: 240px;"></ion-skeleton-text>
+      <div class="skeleton-card" *ngFor="let item of [1,2,3]">
+        <div class="skeleton-image-wrap">
+          <ion-skeleton-text animated style="height: 100%; width: 100%; margin: 0;"></ion-skeleton-text>
+        </div>
         <div class="skeleton-content">
-          <ion-skeleton-text animated style="width: 70%; height: 24px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 30%; height: 20px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60%; height: 22px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 30%; height: 16px;"></ion-skeleton-text>
         </div>
       </div>
     </div>

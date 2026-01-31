@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { 
-  IonContent, 
-  IonButton, 
-  IonIcon, 
-  IonItem, 
-  IonInput, 
+import {
+  IonContent,
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonInput,
   IonInputPasswordToggle,
   ToastController,
   LoadingController
 } from '@ionic/angular/standalone';
 import { Router, ActivatedRoute } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { 
-  mailOutline, 
-  lockClosedOutline, 
-  logoGoogle, 
-  logoApple, 
-  musicalNotes 
+import {
+  mailOutline,
+  lockClosedOutline,
+  logoGoogle,
+  logoApple,
+  musicalNotes
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 
@@ -28,13 +28,13 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
-    IonButton, 
-    IonIcon, 
-    IonItem, 
-    IonInput, 
+    IonContent,
+    IonButton,
+    IonIcon,
+    IonItem,
+    IonInput,
     IonInputPasswordToggle,
-    CommonModule, 
+    CommonModule,
     FormsModule,
     ReactiveFormsModule
   ]
@@ -50,7 +50,7 @@ export class LoginPage implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService
   ) {
-    // Registro de íconos
+    // Icons Registration
     addIcons({
       mailOutline,
       lockClosedOutline,
@@ -59,7 +59,7 @@ export class LoginPage implements OnInit {
       musicalNotes
     });
 
-    // Inicialización del formulario con validaciones
+    // Form Initialization with Validations
     this.loginForm = this.formBuilder.group({
       email: [
         '',
@@ -78,28 +78,18 @@ export class LoginPage implements OnInit {
     });
   }
 
-  /**
-   * Al cargar: por ahora no necesito hacer nada especial aquí.
-   */
-  ngOnInit() {}
+  ngOnInit() { }
 
   /**
-   * Esta es la función principal que hace toda la magia del login.
+   * Performs login using the refactored AuthService
    */
   async login() {
-    // Validar formulario
     if (this.loginForm.invalid) {
       await this.showToast('Por favor, completa todos los campos correctamente', 'warning');
-      
-      // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.loginForm.controls).forEach(key => {
-        this.loginForm.get(key)?.markAsTouched();
-      });
-      
+      this.loginForm.markAllAsTouched();
       return;
     }
 
-    // Mostrar loading
     const loading = await this.loadingController.create({
       message: 'Iniciando sesión...',
       spinner: 'crescent',
@@ -108,47 +98,36 @@ export class LoginPage implements OnInit {
     await loading.present();
 
     try {
-      // Intentar login
       const credentials = this.loginForm.value;
-      
-      await new Promise<void>((resolve, reject) => {
+
+      // Call service and wait for response
+      const response = await new Promise<any>((resolve, reject) => {
         this.authService.login(credentials).subscribe({
-          next: (response) => {
-            console.log('Login exitoso:', response);
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error en login:', error);
-            reject(error);
-          }
+          next: (res) => resolve(res),
+          error: (err) => reject(err)
         });
       });
 
-      // Cerrar loading
       await loading.dismiss();
 
-      // Mostrar mensaje de éxito
-      await this.showToast('¡Bienvenido abordo, pirata! 🏴‍☠️', 'success');
+      if (response && response.status === 'OK') {
+        await this.showToast('¡Bienvenido de nuevo, pirata! 🏴‍☠️', 'success');
 
-      // Pequeña pausa para que se vea el toast
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // FLUJO: Login → Intro → Menu/Home
-      // Siempre mostramos la intro al iniciar sesión por defecto, para cumplir el flujo.
-      this.router.navigate(['/intro'], { replaceUrl: true });
+        // Navigation flow: Login -> Intro -> Home
+        this.router.navigate(['/intro'], { replaceUrl: true });
+      } else {
+        throw new Error(response?.msg || 'Error en la autenticación');
+      }
 
     } catch (error: any) {
-      // Cerrar loading
       await loading.dismiss();
-
-      // Mostrar error
       const errorMessage = error?.message || 'Error al iniciar sesión. Intenta nuevamente.';
       await this.showToast(errorMessage, 'danger');
     }
   }
 
   /**
-   * Un helper rápido para mostrar mensajes flotantes en pantalla.
+   * Simplified toast helper
    */
   private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
     const toast = await this.toastController.create({
@@ -162,24 +141,19 @@ export class LoginPage implements OnInit {
   }
 
   /**
-   * Nos manda a la pantalla de registro si aún no tienes cuenta.
+   * Redirect to register page
    */
   async goToRegister() {
-    console.log('🚀 Navegando a /register');
-    
-    // Si el usuario está autenticado, hacer logout primero (sin redirigir)
     if (this.authService.isAuthenticated) {
-      await this.authService.logout(false); // false = no redirigir
+      await this.authService.logout(false);
     }
-    
     this.router.navigate(['/register']);
   }
 
   /**
-   * Redirige a la recuperación de contraseña (por ahora solo muestra un aviso).
+   * Development placeholder for forgot password
    */
   goToForgotPassword() {
-    // TODO: Implementar página de recuperación
     this.showToast('Función en desarrollo', 'warning');
   }
 }

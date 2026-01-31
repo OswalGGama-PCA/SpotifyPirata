@@ -1,37 +1,45 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 
 // ============================================
-// INTERFACES
+// INTERFACES (SENA Best Practices)
 // ============================================
 
 export interface User {
-  id: string;
+  id?: number | string;
   email: string;
   name: string;
+  last_name?: string;
+  username?: string;
   avatar?: string;
   createdAt?: string;
 }
 
-export interface LoginCredentials {
-  email: string;
-  password: string;
+export interface LoginRequest {
+  user: {
+    email: string;
+    password: string;
+  };
 }
 
-export interface RegisterData {
-  email: string;
-  password: string;
-  name: string;
+export interface SignupRequest {
+  user: {
+    email: string;
+    password: string;
+    password_confirmation: string;
+    name: string;
+    last_name: string;
+  };
 }
 
 export interface AuthResponse {
-  user: User;
-  token: string;
-  refreshToken?: string;
+  msg: string;
+  status: 'OK' | 'ERROR';
+  user?: User;
 }
 
 // ============================================
@@ -42,22 +50,21 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  // API URL - Cambiar por tu backend real
-  private readonly API_URL = 'https://tu-api.com/api/auth';
-  
-  // Storage keys
-  private readonly TOKEN_KEY = 'auth_token';
-  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
-  private readonly USER_KEY = 'current_user';
+  // API URL - Using the provided music.fly.dev backend
+  private readonly API_URL = 'https://music.fly.dev';
 
-  // Estado de autenticación
+  // Storage keys
+  private readonly USER_KEY = 'current_user';
+  private readonly AUTH_STATUS_KEY = 'is_authenticated';
+
+  // State Management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  // Para saber si ya terminamos de leer el storage al arrancar
+  // Initialization flag for guards
   private isReadySubject = new BehaviorSubject<boolean>(false);
   public isReady$ = this.isReadySubject.asObservable();
 
@@ -69,94 +76,91 @@ export class AuthService {
     this.loadStoredAuth();
   }
 
-  // ============================================
-  // INICIALIZACIÓN
-  // ============================================
-
   /**
-   * Carga la autenticación almacenada al iniciar la app
+   * Loads stored user data from local storage on service initialization
    */
   private async loadStoredAuth(): Promise<void> {
     try {
-      const [token, user] = await Promise.all([
-        this.storage.get<string>(this.TOKEN_KEY),
-        this.storage.get<User>(this.USER_KEY)
-      ]);
+      const user = await this.storage.get<User>(this.USER_KEY);
+      const isAuthenticated = await this.storage.get<boolean>(this.AUTH_STATUS_KEY);
 
-      if (token && user) {
+      if (user && isAuthenticated) {
         this.currentUserSubject.next(user);
         this.isAuthenticatedSubject.next(true);
       }
-      
-      // Ya terminamos de revisar, pase lo que pase
-      this.isReadySubject.next(true);
     } catch (error) {
       console.error('Error loading stored auth:', error);
-      this.isReadySubject.next(true); // También marcamos como listo si falla
+    } finally {
+      // Always mark as ready even if it fails
+      this.isReadySubject.next(true);
     }
   }
 
-  // ============================================
-  // AUTENTICACIÓN
-  // ============================================
-
   /**
-   * Inicia sesión con email y contraseña
+   * Logs in a user using the remote API
+   * POST /login
    */
-  login(credentials: LoginCredentials): Observable<AuthResponse> {
-    // MODO DEMO: Simula autenticación exitosa
-    // En producción, reemplazar con llamada HTTP real
-    return this.simulateLogin(credentials).pipe(
-      tap(response => this.handleAuthSuccess(response)),
+  login(credentials: { email: string; password: string }): Observable<AuthResponse> {
+    const payload: LoginRequest = {
+      user: {
+        email: credentials.email,
+        password: credentials.password
+      }
+    };
+
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, payload).pipe(
+      tap(response => {
+        if (response.status === 'OK' && response.user) {
+          this.handleAuthSuccess(response.user);
+        }
+      }),
       catchError(error => this.handleError(error))
     );
-
-    // PRODUCCIÓN: Descomentar cuando tengas backend
-    // return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
-    //   tap(response => this.handleAuthSuccess(response)),
-    //   catchError(error => this.handleError(error))
-    // );
   }
 
   /**
-   * Registra un nuevo usuario
+   * Registers a new user using the remote API
+   * POST /signup
    */
-  register(data: RegisterData): Observable<AuthResponse> {
-    // MODO DEMO
-    return this.simulateRegister(data).pipe(
-      tap(response => this.handleAuthSuccess(response)),
+  signup(data: SignupRequest['user']): Observable<AuthResponse> {
+    const payload: SignupRequest = {
+      user: data
+    };
+
+    return this.http.post<AuthResponse>(`${this.API_URL}/signup`, payload).pipe(
       catchError(error => this.handleError(error))
     );
-
-    // PRODUCCIÓN
-    // return this.http.post<AuthResponse>(`${this.API_URL}/register`, data).pipe(
-    //   tap(response => this.handleAuthSuccess(response)),
-    //   catchError(error => this.handleError(error))
-    // );
   }
 
   /**
-   * Cierra la sesión del usuario
-   * @param redirect - Si debe redirigir al login después del logout (default: true)
+   * Persists user session data
+   */
+  private async handleAuthSuccess(user: User): Promise<void> {
+    try {
+      await this.storage.set(this.USER_KEY, user);
+      await this.storage.set(this.AUTH_STATUS_KEY, true);
+
+      this.currentUserSubject.next(user);
+      this.isAuthenticatedSubject.next(true);
+    } catch (error) {
+      console.error('Error storing session data:', error);
+    }
+  }
+
+  /**
+   * Clears the user session
    */
   async logout(redirect: boolean = true): Promise<void> {
     try {
-      // Opcional: Notificar al backend
-      // await this.http.post(`${this.API_URL}/logout`, {}).toPromise();
-
-      // Limpiar storage
       await Promise.all([
-        this.storage.remove(this.TOKEN_KEY),
-        this.storage.remove(this.REFRESH_TOKEN_KEY),
         this.storage.remove(this.USER_KEY),
+        this.storage.remove(this.AUTH_STATUS_KEY),
         this.storage.remove('login')
       ]);
 
-      // Actualizar estado
       this.currentUserSubject.next(null);
       this.isAuthenticatedSubject.next(false);
 
-      // Redirigir al login solo si se solicita
       if (redirect) {
         this.router.navigate(['/login'], { replaceUrl: true });
       }
@@ -165,216 +169,52 @@ export class AuthService {
     }
   }
 
-  // ============================================
-  // GESTIÓN DE TOKENS
-  // ============================================
-
   /**
-   * Obtiene el token de autenticación actual
+   * Robust Error Handling (Professor's Requirement)
    */
-  async getToken(): Promise<string | null> {
-    return await this.storage.get<string>(this.TOKEN_KEY);
-  }
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'Ha ocurrido un error inesperado';
 
-  /**
-   * Refresca el token de autenticación
-   */
-  async refreshToken(): Promise<string | null> {
-    try {
-      const refreshToken = await this.storage.get<string>(this.REFRESH_TOKEN_KEY);
-      
-      if (!refreshToken) {
-        throw new Error('No refresh token available');
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      switch (error.status) {
+        case 401:
+          errorMessage = 'Credenciales inválidas. Por favor verifica tu correo y contraseña.';
+          break;
+        case 422:
+          // Unprocessable Content (Professor's Requirement)
+          errorMessage = error.error?.msg || 'Datos inválidos. El usuario ya existe o el formato es incorrecto.';
+          break;
+        case 500:
+          errorMessage = 'Error en el servidor. Inténtalo más tarde.';
+          break;
+        default:
+          errorMessage = `Error ${error.status}: ${error.error?.msg || error.message}`;
       }
-
-      // PRODUCCIÓN: Llamada real al backend
-      // const response = await this.http.post<AuthResponse>(
-      //   `${this.API_URL}/refresh`,
-      //   { refreshToken }
-      // ).toPromise();
-
-      // DEMO: Simular refresh
-      const response: AuthResponse = {
-        user: this.currentUserSubject.value!,
-        token: 'new_demo_token_' + Date.now(),
-        refreshToken: 'new_refresh_token_' + Date.now()
-      };
-
-      await this.storage.set(this.TOKEN_KEY, response.token);
-      if (response.refreshToken) {
-        await this.storage.set(this.REFRESH_TOKEN_KEY, response.refreshToken);
-      }
-
-      return response.token;
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-      await this.logout();
-      return null;
     }
+
+    console.error('API Error:', errorMessage, error);
+    return throwError(() => new Error(errorMessage));
   }
 
   // ============================================
-  // GETTERS
+  // GETTERS (Maintained for compatibility)
   // ============================================
 
   /**
-   * Obtiene el usuario actual
+   * Returns the current authenticated user
    */
   get currentUser(): User | null {
     return this.currentUserSubject.value;
   }
 
   /**
-   * Verifica si el usuario está autenticado
+   * Returns the current authentication status
    */
   get isAuthenticated(): boolean {
     return this.isAuthenticatedSubject.value;
-  }
-
-  // ============================================
-  // HELPERS PRIVADOS
-  // ============================================
-
-  /**
-   * Maneja el éxito de autenticación
-   */
-  private async handleAuthSuccess(response: AuthResponse): Promise<void> {
-    try {
-      // Guardar en storage
-      await Promise.all([
-        this.storage.set(this.TOKEN_KEY, response.token),
-        this.storage.set(this.USER_KEY, response.user),
-        this.storage.set('login', true),
-        response.refreshToken 
-          ? this.storage.set(this.REFRESH_TOKEN_KEY, response.refreshToken)
-          : Promise.resolve()
-      ]);
-
-      // Actualizar estado
-      this.currentUserSubject.next(response.user);
-      this.isAuthenticatedSubject.next(true);
-    } catch (error) {
-      console.error('Error storing auth data:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Maneja errores de autenticación
-   */
-  private handleError(error: any): Observable<never> {
-    let errorMessage = 'Ha ocurrido un error';
-
-    if (error instanceof Error) {
-      // Error nativo de JS (lanzado manualmente en simulaciones)
-      errorMessage = error.message;
-    } else if (error.error instanceof ErrorEvent) {
-      // Error del cliente Angular
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // Error del servidor HTTP
-      switch (error.status) {
-        case 401:
-          errorMessage = 'Credenciales inválidas';
-          break;
-        case 403:
-          errorMessage = 'Acceso denegado';
-          break;
-        case 404:
-          errorMessage = 'Usuario no encontrado';
-          break;
-        case 422:
-          errorMessage = 'Datos inválidos';
-          break;
-        case 500:
-          errorMessage = 'Error del servidor';
-          break;
-        default:
-          errorMessage = `Error ${error.status}: ${error.message}`;
-      }
-    }
-
-    console.error('Auth error:', errorMessage, error);
-    return throwError(() => new Error(errorMessage));
-  }
-
-  // ============================================
-  // SIMULACIÓN (SOLO PARA DEMO)
-  // ============================================
-
-  /**
-   * Aqui simulamos el login para desarrollo
-   * SOLO acepta credenciales predefinidas
-   */
-  private simulateLogin(credentials: LoginCredentials): Observable<AuthResponse> {
-    // Credenciales válidas predefinidas
-    const VALID_EMAIL = 'oswalggama@gmail.com';
-    const VALID_PASSWORD = 'Oswal26..';
-
-    return of(null).pipe(
-      map(() => {
-        // Validar que las credenciales coincidan exactamente
-        if (
-          credentials.email === VALID_EMAIL &&
-          credentials.password === VALID_PASSWORD
-        ) {
-          // Login correcto - Crear usuario
-          const user: User = {
-            id: 'user_oswal_123',
-            email: VALID_EMAIL,
-            name: 'Oswal GGama',
-            avatar: 'https://ui-avatars.com/api/?name=Oswal+GGama&background=1DB954&color=fff',
-            createdAt: new Date().toISOString()
-          };
-
-          const response: AuthResponse = {
-            user,
-            token: 'demo_token_' + Date.now(),
-            refreshToken: 'demo_refresh_' + Date.now()
-          };
-
-          return response;
-        } else {
-          // Login incorrecto
-          throw new Error('Credenciales incorrectas');
-        }
-      })
-    );
-  }
-
-  /**
-   * Simula registro para desarrollo
-   * ELIMINAR EN PRODUCCIÓN
-   */
-  private simulateRegister(data: RegisterData): Observable<AuthResponse> {
-    return of(null).pipe(
-      map(() => {
-        // Validación básica
-        if (!data.email || !data.password || !data.name) {
-          throw new Error('Todos los campos son requeridos');
-        }
-
-        if (data.password.length < 6) {
-          throw new Error('Contraseña debe tener al menos 6 caracteres');
-        }
-
-        // Simular respuesta exitosa
-        const user: User = {
-          id: 'demo_user_' + Date.now(),
-          email: data.email,
-          name: data.name,
-          avatar: `https://ui-avatars.com/api/?name=${data.name}&background=1DB954&color=fff`,
-          createdAt: new Date().toISOString()
-        };
-
-        const response: AuthResponse = {
-          user,
-          token: 'demo_token_' + Date.now(),
-          refreshToken: 'demo_refresh_' + Date.now()
-        };
-
-        return response;
-      })
-    );
   }
 }

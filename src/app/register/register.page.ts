@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { 
-  IonContent, 
-  IonButton, 
-  IonIcon, 
-  IonItem, 
-  IonInput, 
+import {
+  IonContent,
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonInput,
   IonInputPasswordToggle,
   IonSpinner,
   ToastController,
@@ -14,13 +14,13 @@ import {
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { 
+import {
   personOutline,
-  mailOutline, 
-  lockClosedOutline, 
-  logoGoogle, 
-  logoApple, 
-  musicalNotes 
+  mailOutline,
+  lockClosedOutline,
+  logoGoogle,
+  logoApple,
+  musicalNotes
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 
@@ -30,14 +30,14 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./register.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
-    IonButton, 
-    IonIcon, 
-    IonItem, 
-    IonInput, 
+    IonContent,
+    IonButton,
+    IonIcon,
+    IonItem,
+    IonInput,
     IonInputPasswordToggle,
     IonSpinner,
-    CommonModule, 
+    CommonModule,
     FormsModule,
     ReactiveFormsModule
   ]
@@ -53,7 +53,7 @@ export class RegisterPage implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService
   ) {
-    // Registro de íconos
+    // Icons Registration
     addIcons({
       personOutline,
       mailOutline,
@@ -63,61 +63,54 @@ export class RegisterPage implements OnInit {
       musicalNotes
     });
 
-    // Inicialización del formulario con validaciones
+    // Form Initialization with SENA requirements
     this.registerForm = this.formBuilder.group({
-      nombre: [
+      name: [
         '',
-        Validators.compose([
-          Validators.required,
-          Validators.minLength(2) // Mínimo 2 caracteres para nombre
-        ])
+        Validators.compose([Validators.required, Validators.minLength(2)])
       ],
-      apellido: [
+      last_name: [
         '',
-        Validators.compose([
-          Validators.required,
-          Validators.minLength(2) // Mínimo 2 caracteres para apellido
-        ])
+        Validators.compose([Validators.required, Validators.minLength(2)])
       ],
       email: [
         '',
-        Validators.compose([
-          Validators.required,
-          Validators.email // Validación de formato de email
-        ])
+        Validators.compose([Validators.required, Validators.email])
       ],
       password: [
         '',
-        Validators.compose([
-          Validators.required,
-          Validators.minLength(8) // 8 caracteres mínimo por seguridad
-        ])
+        Validators.compose([Validators.required, Validators.minLength(8)])
+      ],
+      password_confirmation: [
+        '',
+        Validators.compose([Validators.required])
       ]
+    }, {
+      validators: this.passwordMatchValidator
     });
   }
 
-  /**
-   * Al iniciar, por ahora no hago nada aquí, pero lo dejo listo.
-   */
-  ngOnInit() {}
+  ngOnInit() { }
 
   /**
-   * Aquí es donde registro a los nuevos usuarios. Reviso que todo esté bien antes de enviarlo.
+   * Custom validator to check if passwords match
+   */
+  passwordMatchValidator(g: FormGroup) {
+    const password = g.get('password')?.value;
+    const confirm = g.get('password_confirmation')?.value;
+    return password === confirm ? null : { mismatch: true };
+  }
+
+  /**
+   * Registers a new user using the refactored AuthService
    */
   async register() {
-    // Validar formulario
     if (this.registerForm.invalid) {
       await this.showToast('Por favor, completa todos los campos correctamente', 'warning');
-      
-      // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.registerForm.controls).forEach(key => {
-        this.registerForm.get(key)?.markAsTouched();
-      });
-      
+      this.registerForm.markAllAsTouched();
       return;
     }
 
-    // Mostrar loading
     this.isLoading = true;
     const loading = await this.loadingController.create({
       message: 'Creando tu cuenta...',
@@ -127,85 +120,58 @@ export class RegisterPage implements OnInit {
     await loading.present();
 
     try {
-      // Preparar datos para el registro
-      const registerData = {
-        email: this.registerForm.value.email,
-        password: this.registerForm.value.password,
-        name: `${this.registerForm.value.nombre} ${this.registerForm.value.apellido}`
-      };
+      const formData = this.registerForm.value;
 
-      // Intentar registro
-      await new Promise<void>((resolve, reject) => {
-        this.authService.register(registerData).subscribe({
-          next: (response) => {
-            console.log('Registro exitoso:', response);
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error en registro:', error);
-            reject(error);
-          }
+      // Call service and wait for response
+      const response = await new Promise<any>((resolve, reject) => {
+        this.authService.signup(formData).subscribe({
+          next: (res) => resolve(res),
+          error: (err) => reject(err)
         });
       });
 
-      // Cerrar loading
-      this.isLoading = false;
       await loading.dismiss();
+      this.isLoading = false;
 
-      // Mostrar mensaje de éxito
-      await this.showToast('¡Cuenta creada exitosamente! 🎉', 'success');
+      if (response && response.status === 'OK') {
+        await this.showToast('¡Cuenta creada exitosamente! 🎉', 'success');
 
-      // Pequeña pausa para que se vea el toast
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Navegar al login
-      // Justificación: Después del registro, el usuario debe iniciar sesión
-      // Esto es una práctica común y permite verificar las credenciales
-      this.router.navigate(['/login'], { 
-        replaceUrl: true,
-        state: { 
-          registered: true,
-          email: this.registerForm.value.email 
-        }
-      });
+        // Wait a bit and redirect to login
+        setTimeout(() => {
+          this.router.navigate(['/login'], { replaceUrl: true });
+        }, 1500);
+      } else {
+        throw new Error(response?.msg || 'Error en el registro');
+      }
 
     } catch (error: any) {
-      // Cerrar loading
       this.isLoading = false;
       await loading.dismiss();
-
-      // Mostrar error
       const errorMessage = error?.message || 'Error al crear la cuenta. Intenta nuevamente.';
       await this.showToast(errorMessage, 'danger');
     }
   }
 
   /**
-   * Me ayuda a saber si la contraseña es segura o si es muy fácil de adivinar.
+   * Password strength logic (remains for UX)
    */
   getPasswordStrength(): string {
     const password = this.registerForm.get('password')?.value || '';
-    
     if (password.length === 0) return 'strength-none';
-    if (password.length < 6) return 'strength-weak';
-    if (password.length < 8) return 'strength-medium';
-    
-    // Verificar si tiene mayúsculas, minúsculas, números y caracteres especiales
+    if (password.length < 8) return 'strength-weak';
+
     const hasUpper = /[A-Z]/.test(password);
     const hasLower = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    
+
     const strength = [hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
-    
+
     if (strength >= 3 && password.length >= 10) return 'strength-strong';
     if (strength >= 2 && password.length >= 8) return 'strength-good';
     return 'strength-medium';
   }
 
-  /**
-   * Muestra qué tan segura es la contraseña con un texto amigable.
-   */
   getPasswordStrengthText(): string {
     const strength = this.getPasswordStrength();
     const texts: Record<string, string> = {
@@ -218,9 +184,6 @@ export class RegisterPage implements OnInit {
     return texts[strength] || '';
   }
 
-  /**
-   * Otra vez el helper para los avisos en pantalla.
-   */
   private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
     const toast = await this.toastController.create({
       message,
@@ -232,9 +195,6 @@ export class RegisterPage implements OnInit {
     await toast.present();
   }
 
-  /**
-   * Botón para regresar al login si ya tienes cuenta.
-   */
   goToLogin() {
     this.router.navigate(['/login']);
   }

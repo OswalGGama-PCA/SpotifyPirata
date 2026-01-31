@@ -1,24 +1,34 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { 
-  IonContent, 
-  IonIcon, 
-  IonProgressBar, 
-  IonButton, 
-  IonSkeletonText
+import {
+  IonContent,
+  IonIcon,
+  IonProgressBar,
+  IonButton,
+  IonSkeletonText,
+  IonRippleEffect,
+  ModalController
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { addIcons } from 'ionicons';
-import { 
-  refreshOutline, 
-  locationOutline, 
+import {
+  refreshOutline,
+  locationOutline,
   flag,
-  colorWandOutline
+  colorWandOutline,
+  playCircleOutline,
+  play
 } from 'ionicons/icons';
 import { ThemeService } from '../services/theme.service';
+import { MusicService } from '../services/music.service';
+import { DeezerService } from '../services/deezer.service';
+import { SongsModalPage } from '../songs-modal/songs-modal.page';
+
+// 1. Import register to initialize Swiper Web Components
+import { register } from 'swiper/element/bundle';
+
+// Initialize Swiper Elements
+register();
 
 @Component({
   selector: 'app-home',
@@ -26,12 +36,13 @@ import { ThemeService } from '../services/theme.service';
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    IonContent, 
-    IonIcon, 
-    IonProgressBar, 
-    IonButton, 
-    IonSkeletonText
+    CommonModule,
+    IonContent,
+    IonIcon,
+    IonProgressBar,
+    IonButton,
+    IonSkeletonText,
+    IonRippleEffect
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -42,101 +53,116 @@ export class HomePage implements OnInit {
   isLoading = true;
 
   constructor(
-    private http: HttpClient, 
     private themeService: ThemeService,
+    private musicService: MusicService,
+    private deezerService: DeezerService,
+    private modalController: ModalController,
     private router: Router
   ) {
     addIcons({
       refreshOutline,
       locationOutline,
       flag,
-      colorWandOutline
+      colorWandOutline,
+      playCircleOutline,
+      play
     });
   }
 
-  /**
-   * Al arrancar la página: escucho si cambia el tema y cargo a los artistas.
-   */
-  async ngOnInit() {
+  ngOnInit() {
     this.themeService.currentTheme$.subscribe(theme => {
       this.currentTheme = theme;
     });
+
     this.loadArtists();
   }
 
   /**
-   * Maneja el estado de carga mientras bajamos la info de los artistas.
+   * Carga los artistas con mapeo defensivo para evitar "undefined"
    */
   async loadArtists() {
     this.isLoading = true;
-    try {
-      this.artists = await this.obtenerArtistas();
-    } catch (error) {
-      console.error('Error loading artists:', error);
-    } finally {
-      this.isLoading = false;
-    }
-  }
+    this.musicService.getArtists().subscribe({
+      next: (data: any) => {
+        // Mapeo defensivo: asegura que 'title' e 'img' existan para el HTML
+        const artistsData = Array.isArray(data) ? data : (data.artists || []);
 
-  private obtenerArtistas(): Promise<any[]> {
-    const artistNames = [
-      'Coldplay', 'Metallica', 'Beyonce', 'Bad Bunny', 'Daft Punk', 'Marc Anthony',
-      'Taylor Swift', 'Ed Sheeran', 'Ariana Grande', 'Drake', 'Rihanna',
-      'The Weeknd', 'Billie Eilish', 'Justin Bieber', 'Lady Gaga', 'Bruno Mars',
-      'Adele', 'Queen', 'The Beatles', 'Michael Jackson', 'Madonna', 'Eminem',
-      'Shakira', 'U2', 'Bob Marley', 'David Bowie'
-    ];
+        this.artists = artistsData.map((a: any) => ({
+          id: a.id,
+          title: a.name || a.title || 'Artista desconocido',
+          img: a.image || a.img || a.avatar || 'assets/default-artist.png',
+          genre: (a.genres && a.genres.length > 0) ? a.genres[0] : 'Género variado',
+          followers: a.followers || 0
+        }));
 
-    return new Promise(async (resolve) => {
-      const requests = artistNames.map(name =>
-        firstValueFrom(
-          this.http.get(`https://www.theaudiodb.com/api/v1/json/2/search.php?s=${encodeURIComponent(name)}`)
-            .pipe(catchError(() => of(null)))
-        )
-      );
-
-      const results = await Promise.allSettled(requests);
-      const artists: any[] = [];
-
-      results.forEach((r: any) => {
-        if (r.status === 'fulfilled' && r.value && r.value.artists && r.value.artists.length > 0) {
-          const a = r.value.artists[0];
-          artists.push({
-            title: a.strArtist,
-            img: a.strArtistThumb || a.strArtistBanner || 'assets/default-artist.png',
-            description: ((a.strBiographyEN || a.strBiographyES || 'No description available') + '').substring(0, 200) + '...',
-            genre: a.strGenre,
-            country: a.strCountry
-          });
-        }
-      });
-
-      setTimeout(() => resolve(artists), 400);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar artistas:', err);
+        this.isLoading = false;
+      }
     });
   }
 
   /**
-   * Actualiza la barrita de progreso cuando nos movemos entre los slides.
+   * Muestra las canciones del artista usando la API de Deezer (Data Real)
    */
+  async showSongsByArtist(artist: any) {
+    // Usamos el nombre del artista para buscar sus canciones en Deezer
+    const query = `artist:"${artist.title}"`;
+
+    this.deezerService.searchTracks(query).subscribe({
+      next: async (data: any[]) => {
+        // Limitamos a 5 canciones para el modal
+        const mappedSongs = data.slice(0, 5).map(track => ({
+          id: track.id,
+          name: track.title,
+          album: track.album.title,
+          image: track.album.cover_medium,
+          preview: track.preview
+        }));
+
+        const modal = await this.modalController.create({
+          component: SongsModalPage,
+          componentProps: {
+            artistName: artist.title,
+            songs: mappedSongs
+          },
+          breakpoints: [0, 0.5, 0.9],
+          initialBreakpoint: 0.9,
+          cssClass: 'custom-songs-modal'
+        });
+
+        await modal.present();
+
+        // Manejamos el cierre del modal para saber si quiere ir a ver más
+        const { data: modalResult } = await modal.onDidDismiss();
+        if (modalResult?.goToMusic) {
+          this.router.navigate(['/menu/music'], {
+            queryParams: { q: artist.title }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar canciones de Deezer:', err);
+      }
+    });
+  }
+
   onSlideChange(event: any) {
     const swiper = event.target.swiper;
-    if (this.artists.length > 0) {
+    if (this.artists.length > 0 && swiper) {
       this.progress = (swiper.realIndex + 1) / this.artists.length;
     }
   }
 
-  /**
-   * Limpia todo y vuelve a traer a los artistas desde la API.
-   */
   async reloadArtists() {
-    (document.activeElement as HTMLElement | null)?.blur();
     this.artists = [];
-    await this.loadArtists();
+    this.musicService.refreshArtists().subscribe({
+      next: (data) => this.loadArtists() // Recargamos usando el mapeo defensivo
+    });
   }
 
-  /**
-   * Me dice qué tema tengo puesto ahorita para mostrarlo en el botón.
-   */
   getCurrentThemeLabel(): string {
     return this.themeService.getThemeLabel(this.currentTheme);
   }
