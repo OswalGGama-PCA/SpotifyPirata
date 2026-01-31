@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonIcon,
-  IonProgressBar,
   IonButton,
   IonSkeletonText,
   IonRippleEffect,
@@ -46,7 +45,6 @@ register();
     FormsModule,
     IonContent,
     IonIcon,
-    IonProgressBar,
     IonButton,
     IonSkeletonText,
     IonRippleEffect,
