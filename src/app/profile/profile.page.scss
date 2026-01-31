@@ -6,6 +6,12 @@ ion-content {
     --background: var(--slide-background);
     --padding-top: 56px;
     --padding-bottom: 40px;
+    --overflow: auto;
+
+    &::part(scroll) {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 .profile-container {

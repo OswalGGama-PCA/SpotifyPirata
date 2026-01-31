@@ -6,6 +6,12 @@ ion-content {
   --background: var(--slide-background);
   --padding-top: 56px; // Espacio para el ion-header del menú
   --padding-bottom: 80px;
+  --overflow: auto;
+
+  &::part(scroll) {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 // ============================================
@@ -16,6 +22,7 @@ ion-content {
   padding: 12px 20px 8px;
   background: var(--slide-background);
   backdrop-filter: blur(20px);
+  pointer-events: auto;
 
   .home-search {
     --background: rgba(255, 255, 255, 0.08);
@@ -25,6 +32,7 @@ ion-content {
     --icon-color: var(--slide-button-background);
 
     padding: 0;
+    pointer-events: auto;
 
     &::part(icon) {
       color: var(--slide-button-background);
