@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonSearchbar,
   IonList,
   IonItem,
@@ -14,8 +11,6 @@ import {
   IonIcon,
   IonSkeletonText,
   IonButton,
-  IonSegment,
-  IonSegmentButton,
   IonChip,
   IonBadge
 } from '@ionic/angular/standalone';
@@ -47,9 +42,6 @@ import { ActivatedRoute } from '@angular/router';
   standalone: true,
   imports: [
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonSearchbar,
     IonList,
     IonItem,
@@ -58,8 +50,6 @@ import { ActivatedRoute } from '@angular/router';
     IonIcon,
     IonSkeletonText,
     IonButton,
-    IonSegment,
-    IonSegmentButton,
     IonChip,
     IonBadge,
     CommonModule,
