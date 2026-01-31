@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  IonContent, 
-  IonButton, 
-  IonIcon, 
+import {
+  IonContent,
+  IonButton,
+  IonIcon,
   IonProgressBar,
   IonFab,
   IonFabButton,
@@ -17,9 +17,9 @@ import { AuthService } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { 
-  chevronBackOutline, 
-  chevronForwardOutline, 
+import {
+  chevronBackOutline,
+  chevronForwardOutline,
   arrowForwardOutline,
   rocketOutline,
   colorPaletteOutline
@@ -31,13 +31,13 @@ import {
   styleUrls: ['./intro.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
+    IonContent,
     IonButton,
     IonIcon,
     IonProgressBar,
     IonFab,
     IonFabButton,
-    CommonModule, 
+    CommonModule,
     FormsModule
   ]
 })
@@ -46,34 +46,31 @@ export class IntroPage implements OnInit, AfterViewInit {
 
   slides = [
     {
-      title: 'Bienvenido',
-      subtitle: 'Descubre una experiencia única',
-      text: 'Explora todas las características que tenemos preparadas para ti. Una plataforma diseñada para amantes de la música.',
-
+      title: '🎧 Bienvenido a Spotify Pirata',
+      subtitle: 'Tu música, tu mundo',
+      text: 'Sumérgete en una experiencia musical única. Auriculares premium, sonido envolvente y millones de canciones esperándote.',
       img: 'assets/images/intro_1.png'
     },
     {
-      title: 'Explora',
-      subtitle: 'Encuentra tu música favorita',
-      text: 'Navega entre miles de artistas, géneros y playlists cuidadosamente seleccionadas para todos los gustos musicales.',
-
+      title: '🔍 Explora Sin Límites',
+      subtitle: 'Descubre nuevos horizontes musicales',
+      text: 'Navega por un universo infinito de música. Busca tus artistas favoritos, explora géneros y encuentra joyas ocultas.',
       img: 'assets/images/intro_2.png'
     },
     {
-      title: 'Descubre',
-      subtitle: 'Recomendaciones inteligentes',
-      text: 'Recibe sugerencias personalizadas diariamente basadas en tus gustos y hábitos de escucha.',
-
+      title: '💡 Descubre Música Inteligente',
+      subtitle: 'Recomendaciones que te sorprenderán',
+      text: 'Algoritmos avanzados que aprenden de tus gustos. Cada día, nuevas canciones perfectas para ti brillarán en tu pantalla.',
       img: 'assets/images/intro_3.png'
     },
     {
-      title: 'Listo',
-      subtitle: 'Comienza tu experiencia',
-      text: 'Todo está configurado. Presiona comenzar y sumérgete en el mundo de la música como nunca antes.',
-
+      title: '🚀 ¡Despega Ahora!',
+      subtitle: 'Tu viaje musical comienza',
+      text: 'Todo listo para el despegue. Presiona el botón y lánzate a la estratósfera de la mejor música del planeta.',
       img: 'assets/images/intro_4.png'
     }
   ];
+
 
   currentIndex = 0;
   imageLoaded = false;
@@ -88,7 +85,7 @@ export class IntroPage implements OnInit, AfterViewInit {
   private _parallaxHandlers?: { onMove: (e: MouseEvent) => void; onLeave: () => void; el?: any };
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private storageService: StorageService,
     private authService: AuthService,
     private themeService: ThemeService,
@@ -170,20 +167,20 @@ export class IntroPage implements OnInit, AfterViewInit {
   private detectSwipeGestures() {
     let startX: number;
     let startY: number;
-    
+
     document.addEventListener('touchstart', (e) => {
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
     }, { passive: true });
-    
+
     document.addEventListener('touchend', (e) => {
       if (!startX || !startY) return;
-      
+
       const endX = e.changedTouches[0].clientX;
       const endY = e.changedTouches[0].clientY;
       const diffX = startX - endX;
       const diffY = startY - endY;
-      
+
       // Solo procesar si el movimiento es principalmente horizontal
       if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
         if (diffX > 0) {
@@ -202,13 +199,13 @@ export class IntroPage implements OnInit, AfterViewInit {
     this.swipeGesture = this.gestureCtrl.create({
       el: element,
       gestureName: 'swipe',
-      onStart: () => {},
+      onStart: () => { },
       onMove: (ev) => {
         // Efecto visual durante el swipe
         const slide = element.querySelector('.slide.active');
         if (slide) {
           // Desactivar transición CSS para evitar "doble" efecto o lag
-          slide.style.transition = 'none'; 
+          slide.style.transition = 'none';
           slide.style.transform = `translateX(${ev.deltaX}px) scale(${1 - Math.abs(ev.deltaX) / 1000})`;
           slide.style.opacity = `${1 - Math.abs(ev.deltaX) / 300}`;
         }
@@ -217,7 +214,7 @@ export class IntroPage implements OnInit, AfterViewInit {
         const slide = element.querySelector('.slide.active') as HTMLElement;
         if (slide) {
           // Restaurar transición y limpiar estilos inline
-          slide.style.transition = ''; 
+          slide.style.transition = '';
           slide.style.transform = '';
           slide.style.opacity = '';
         }
@@ -231,7 +228,7 @@ export class IntroPage implements OnInit, AfterViewInit {
         }
       }
     });
-    
+
     this.swipeGesture.enable(true);
   }
 
@@ -257,7 +254,7 @@ export class IntroPage implements OnInit, AfterViewInit {
 
   // Métodos simplificados eliminando animaciones JS complejas que causan conflictos
   // Las transiciones ahora se manejan puramente via CSS en intro.page.scss
-  
+
   /**
    * Navega directamente a un slide específico (para los dots)
    */
@@ -273,7 +270,7 @@ export class IntroPage implements OnInit, AfterViewInit {
    */
   async goHome() {
     this.isLoading = true;
-    
+
     // Guardar que vio la intro y navegar (User Specific)
     const user = this.authService.currentUser;
     if (user) {

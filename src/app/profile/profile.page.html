@@ -1,63 +1,156 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Mi Camarote</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
+<ion-content [fullscreen]="true">
   <div class="profile-container">
-    <!-- Avatar Section -->
-    <div class="avatar-section">
+
+    <!-- ============================================ -->
+    <!-- HEADER CON AVATAR Y INFO BÁSICA -->
+    <!-- ============================================ -->
+    <div class="profile-header">
       <div class="avatar-wrapper">
         <img [src]="avatarUrl" alt="Avatar" />
         <div class="rank-badge">
           <ion-icon name="skull-outline"></ion-icon>
         </div>
+        <button class="edit-avatar-btn" (click)="navigateToEditProfile()">
+          <ion-icon name="create-outline"></ion-icon>
+        </button>
       </div>
-      <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>
-      <p class="email">{{ user?.email }}</p>
-      <div class="level-pill">{{ pirateLevel }}</div>
+
+      <h1 class="user-name">{{ user?.name || 'Capitán' }}</h1>
+      <p class="user-email">{{ user?.email }}</p>
+      <div class="level-badge">{{ pirateLevel }}</div>
     </div>
 
-    <!-- Stats Grid -->
-    <ion-grid class="stats-grid">
-      <ion-row>
-        <ion-col size="6">
-          <ion-card class="stat-card">
-            <ion-card-content>
+    <!-- ============================================ -->
+    <!-- ESTADÍSTICAS PRINCIPALES -->
+    <!-- ============================================ -->
+    <div class="stats-section">
+      <h2 class="section-title">📊 Tus Estadísticas</h2>
+
+      <ion-grid class="stats-grid">
+        <ion-row>
+          <ion-col size="6">
+            <div class="stat-card">
               <div class="stat-icon">
                 <ion-icon name="musical-notes-outline"></ion-icon>
               </div>
+              <h3>{{ stats.songsPlayed }}</h3>
+              <p>Canciones</p>
+            </div>
+          </ion-col>
+
+          <ion-col size="6">
+            <div class="stat-card">
+              <div class="stat-icon time">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+              <h3>{{ stats.hoursListened }}h</h3>
+              <p>Escuchadas</p>
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="6">
+            <div class="stat-card">
+              <div class="stat-icon heart">
+                <ion-icon name="heart-outline"></ion-icon>
+              </div>
               <h3>{{ favoritesCount }}</h3>
-              <p>Tesoros</p>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-        <ion-col size="6">
-          <ion-card class="stat-card">
-            <ion-card-content>
+              <p>Favoritos</p>
+            </div>
+          </ion-col>
+
+          <ion-col size="6">
+            <div class="stat-card">
               <div class="stat-icon trophy">
                 <ion-icon name="trophy-outline"></ion-icon>
               </div>
-              <h3>{{ favoritesCount * 50 }}XP</h3>
-              <p>Fama</p>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+              <h3>{{ favoritesCount * 50 }}</h3>
+              <p>XP</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
 
-    <!-- Actions List -->
-    <ion-list lines="none" class="action-list">
-      <ion-item button detail="true" (click)="logout()" class="logout-item">
-        <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
-        <ion-label color="danger">Abandonar el Barco</ion-label>
-      </ion-item>
-    </ion-list>
+    <!-- ============================================ -->
+    <!-- LOGROS / ACHIEVEMENTS -->
+    <!-- ============================================ -->
+    <div class="achievements-section" *ngIf="achievements.length > 0">
+      <h2 class="section-title">🏆 Logros Desbloqueados</h2>
 
+      <div class="achievements-grid">
+        <div class="achievement-card" *ngFor="let achievement of achievements" [class.locked]="!achievement.unlocked">
+          <div class="achievement-icon" [class]="achievement.color">
+            <ion-icon [name]="achievement.icon"></ion-icon>
+          </div>
+          <div class="achievement-info">
+            <h4>{{ achievement.title }}</h4>
+            <p>{{ achievement.description }}</p>
+          </div>
+          <ion-badge *ngIf="achievement.unlocked" color="success">✓</ion-badge>
+          <ion-badge *ngIf="!achievement.unlocked" color="medium">🔒</ion-badge>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TOP GÉNEROS -->
+    <!-- ============================================ -->
+    <div class="genres-section" *ngIf="topGenres.length > 0">
+      <h2 class="section-title">🎵 Tus Géneros Favoritos</h2>
+
+      <div class="genres-chips">
+        <ion-chip *ngFor="let genre of topGenres" color="primary">
+          <ion-label>{{ genre }}</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ACTIVIDAD RECIENTE -->
+    <!-- ============================================ -->
+    <div class="activity-section" *ngIf="recentActivity.length > 0">
+      <h2 class="section-title">⏱️ Actividad Reciente</h2>
+
+      <ion-list lines="none" class="activity-list">
+        <ion-item *ngFor="let activity of recentActivity">
+          <ion-icon name="musical-notes-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>{{ activity.action }}</h3>
+            <p>{{ activity.song }} • {{ activity.time }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ACCIONES RÁPIDAS -->
+    <!-- ============================================ -->
+    <div class="actions-section">
+      <h2 class="section-title">⚙️ Configuración</h2>
+
+      <ion-list lines="none" class="action-list">
+        <ion-item button detail="true" (click)="navigateToEditProfile()">
+          <ion-icon slot="start" name="create-outline" color="primary"></ion-icon>
+          <ion-label>Editar Perfil</ion-label>
+        </ion-item>
+
+        <ion-item button detail="true" (click)="navigateToSettings()">
+          <ion-icon slot="start" name="settings-outline" color="primary"></ion-icon>
+          <ion-label>Preferencias</ion-label>
+        </ion-item>
+
+        <ion-item button detail="true" (click)="logout()" class="logout-item">
+          <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+          <ion-label color="danger">Abandonar el Barco</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- VERSION INFO -->
+    <!-- ============================================ -->
     <div class="version-info">
       <p>Spotify Pirata v1.0.0</p>
       <p>Hecho con ⚓ por el Equipo Deezer by GamaYuto21</p>

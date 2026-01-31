@@ -1,174 +1,446 @@
+// ============================================
+// PROFILE PAGE - MI CAMAROTE
+// ============================================
+
 ion-content {
-    --background: linear-gradient(180deg, rgba(var(--ion-color-dark-rgb), 0.9) 0%, var(--ion-background-color) 100%);
+    --background: var(--slide-background);
+    --padding-top: 56px;
+    --padding-bottom: 40px;
 }
 
 .profile-container {
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100%;
 }
 
-/* Avatar Section */
-.avatar-section {
+// ============================================
+// PROFILE HEADER
+// ============================================
+
+.profile-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 32px;
     text-align: center;
-    width: 100%;
-}
+    margin-bottom: 32px;
+    padding: 24px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
-.avatar-wrapper {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    margin-bottom: 16px;
-}
+    .avatar-wrapper {
+        position: relative;
+        width: 140px;
+        height: 140px;
+        margin-bottom: 20px;
 
-.avatar-wrapper img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--slide-button-background);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--slide-button-background);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
 
-.rank-badge {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: var(--slide-button-background);
-    color: var(--slide-button-text-color);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid var(--ion-background-color);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
 
-    ion-icon {
-        font-size: 1.2rem;
+        .rank-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--slide-button-background);
+            color: var(--slide-button-text-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--slide-background);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+            ion-icon {
+                font-size: 1.4rem;
+            }
+        }
+
+        .edit-avatar-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--slide-background);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+
+            ion-icon {
+                font-size: 1.1rem;
+            }
+
+            &:active {
+                transform: scale(0.9);
+            }
+        }
+    }
+
+    .user-name {
+        font-size: 2rem;
+        font-weight: 900;
+        margin: 0 0 8px;
+        color: var(--slide-text-color);
+        letter-spacing: -0.5px;
+    }
+
+    .user-email {
+        margin: 0 0 16px;
+        color: var(--slide-secondary-text);
+        font-size: 0.95rem;
+        opacity: 0.8;
+    }
+
+    .level-badge {
+        background: linear-gradient(135deg, var(--slide-button-background) 0%, rgba(29, 185, 84, 0.7) 100%);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 24px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
     }
 }
 
-.avatar-section h2 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin: 0 0 4px;
-    color: var(--slide-text-color);
-}
+// ============================================
+// SECTIONS
+// ============================================
 
-.avatar-section .email {
-    margin: 0 0 16px;
-    color: var(--slide-secondary-text);
-    font-size: 0.95rem;
-}
-
-.level-pill {
-    background: rgba(var(--ion-color-primary-rgb), 0.2);
-    color: var(--slide-button-background);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.3);
-}
-
-/* Stats Grid */
-.stats-grid {
-    width: 100%;
-    padding: 0;
+.stats-section,
+.achievements-section,
+.genres-section,
+.activity-section,
+.actions-section {
     margin-bottom: 32px;
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--slide-text-color);
+        margin: 0 0 16px;
+        letter-spacing: -0.3px;
+    }
+}
+
+// ============================================
+// STATS GRID
+// ============================================
+
+.stats-grid {
+    padding: 0;
+    margin: 0;
 }
 
 .stat-card {
-    margin: 0;
-    height: 100%;
-    background: rgba(var(--ion-text-color-rgb), 0.05);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
-    box-shadow: none;
-    border: 1px solid rgba(var(--ion-text-color-rgb), 0.1);
+    padding: 20px 16px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 12px;
 
-    ion-card-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 20px 16px;
+    &:active {
+        transform: scale(0.95);
     }
 
     .stat-icon {
-        background: rgba(var(--ion-color-primary-rgb), 0.1);
+        background: rgba(29, 185, 84, 0.15);
         color: var(--slide-button-background);
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 12px;
+        margin: 0 auto 12px;
 
         ion-icon {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
+        }
+
+        &.time {
+            background: rgba(33, 150, 243, 0.15);
+            color: #2196F3;
+        }
+
+        &.heart {
+            background: rgba(244, 67, 54, 0.15);
+            color: #F44336;
         }
 
         &.trophy {
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
+            background: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
         }
     }
 
     h3 {
-        font-size: 1.6rem;
-        font-weight: 700;
+        font-size: 1.8rem;
+        font-weight: 800;
         margin: 0 0 4px;
         color: var(--slide-text-color);
     }
 
     p {
         margin: 0;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: var(--slide-secondary-text);
         text-transform: uppercase;
         letter-spacing: 1px;
+        font-weight: 600;
     }
 }
 
-/* Actions */
-.action-list {
-    width: 100%;
-    background: transparent;
+// ============================================
+// ACHIEVEMENTS
+// ============================================
+
+.achievements-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.achievement-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.2s ease;
+
+    &.locked {
+        opacity: 0.5;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    .achievement-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        ion-icon {
+            font-size: 1.6rem;
+        }
+
+        &.danger {
+            background: rgba(244, 67, 54, 0.15);
+            color: #F44336;
+        }
+
+        &.warning {
+            background: rgba(255, 152, 0, 0.15);
+            color: #FF9800;
+        }
+
+        &.tertiary {
+            background: rgba(156, 39, 176, 0.15);
+            color: #9C27B0;
+        }
+
+        &.success {
+            background: rgba(76, 175, 80, 0.15);
+            color: #4CAF50;
+        }
+
+        &.medium {
+            background: rgba(158, 158, 158, 0.15);
+            color: #9E9E9E;
+        }
+    }
+
+    .achievement-info {
+        flex: 1;
+
+        h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0 0 4px;
+            color: var(--slide-text-color);
+        }
+
+        p {
+            font-size: 0.85rem;
+            margin: 0;
+            color: var(--slide-secondary-text);
+        }
+    }
+
+    ion-badge {
+        flex-shrink: 0;
+    }
+}
+
+// ============================================
+// GENRES
+// ============================================
+
+.genres-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    ion-chip {
+        --background: rgba(29, 185, 84, 0.15);
+        --color: var(--slide-button-background);
+        font-weight: 700;
+        border: 1px solid rgba(29, 185, 84, 0.3);
+    }
+}
+
+// ============================================
+// ACTIVITY LIST
+// ============================================
+
+.activity-list {
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 32px;
-    /* Glassmorphism sutil */
-    background: rgba(var(--ion-text-color-rgb), 0.05);
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    ion-item {
+        --background: transparent;
+        --padding-start: 16px;
+        --padding-end: 16px;
+        --inner-padding-end: 0;
+
+        ion-label {
+            h3 {
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: var(--slide-text-color);
+                margin-bottom: 4px;
+            }
+
+            p {
+                font-size: 0.8rem;
+                color: var(--slide-secondary-text);
+            }
+        }
+    }
 }
 
-.logout-item {
-    --background: transparent;
-    --padding-start: 16px;
-    --padding-end: 16px;
-    --inner-padding-end: 16px;
+// ============================================
+// ACTIONS LIST
+// ============================================
+
+.action-list {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    ion-item {
+        --background: transparent;
+        --padding-start: 16px;
+        --padding-end: 16px;
+        --inner-padding-end: 16px;
+
+        &.logout-item {
+            --background: rgba(244, 67, 54, 0.05);
+        }
+
+        &:active {
+            --background: rgba(255, 255, 255, 0.05);
+        }
+    }
 }
 
-/* Version Info */
+// ============================================
+// VERSION INFO
+// ============================================
+
 .version-info {
-    margin-top: auto;
+    margin-top: 32px;
     text-align: center;
-    padding-bottom: 20px;
+    padding: 20px;
 
     p {
         margin: 4px 0;
         color: var(--slide-secondary-text);
         font-size: 0.8rem;
         opacity: 0.6;
+    }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@media (min-width: 768px) {
+    .profile-container {
+        padding: 32px;
+    }
+
+    .achievements-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stats-section,
+.achievements-section,
+.genres-section,
+.activity-section,
+.actions-section {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+// ============================================
+// ACCESSIBILITY
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
     }
 }

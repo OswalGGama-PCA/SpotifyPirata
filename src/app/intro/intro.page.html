@@ -25,14 +25,15 @@
 
           <!-- Visualización de la Diapositiva -->
           <div class="card-image" [class.has-img]="slide.img">
-            <img *ngIf="slide.img" [src]="slide.img" [alt]="slide.title" (load)="onImageLoad()"
-              (error)="onImageError()">
+            <img *ngIf="slide.img" [src]="slide.img" [alt]="slide.title" (load)="onImageLoad()" (error)="onImageError()"
+              class="slide-img">
           </div>
 
           <!-- Contenido de Texto -->
           <div class="card-body ion-text-center">
-            <h2 class="ion-text-wrap">{{ slide.title }}</h2>
-            <p class="ion-text-wrap">{{ slide.text }}</p>
+            <h2 class="slide-title ion-text-wrap">{{ slide.title }}</h2>
+            <p class="slide-subtitle ion-text-wrap">{{ slide.subtitle }}</p>
+            <p class="slide-text ion-text-wrap">{{ slide.text }}</p>
 
             <!-- Navegación de Puntos -->
             <nav class="dots ion-margin-top" aria-label="Navegación de diapositivas">
@@ -44,7 +45,7 @@
             <div class="actions ion-margin-top">
               <ion-button expand="block" (click)="i === slides.length - 1 ? goHome() : next()" class="cta-button"
                 aria-label="Comenzar">
-                {{ i === slides.length - 1 ? 'Empezar ahora' : 'Siguiente' }}
+                {{ i === slides.length - 1 ? '🚀 Empezar Ahora' : 'Siguiente →' }}
                 <ion-icon slot="end"
                   [name]="i === slides.length - 1 ? 'rocket-outline' : 'arrow-forward-outline'"></ion-icon>
               </ion-button>
@@ -53,7 +54,7 @@
               <ion-button fill="clear" expand="block" (click)="i === slides.length - 1 ? restartIntro() : skipToEnd()"
                 class="skip-button"
                 [attr.aria-label]="i === slides.length - 1 ? 'Reiniciar introducción' : 'Saltar introducción'">
-                {{ i === slides.length - 1 ? 'Ver nuevamente' : 'Saltar Intro' }}
+                {{ i === slides.length - 1 ? '↻ Ver nuevamente' : 'Saltar Intro' }}
               </ion-button>
             </div>
           </div>

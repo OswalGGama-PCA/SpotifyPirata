@@ -1,279 +1,505 @@
-// --------------------------------------------------------------------------
-// DESIGN SYSTEM - HOME PAGE
-// --------------------------------------------------------------------------
+// ============================================
+// HOME PAGE - COMPLETE MUSIC EXPERIENCE
+// ============================================
 
 ion-content {
   --background: var(--slide-background);
-  --padding-top: 0;
-  --padding-bottom: 40px;
-  transition: background 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-
-  // Fondo dinámico con gradiente sutil
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(circle at 50% 10%, rgba(var(--ion-color-primary-rgb), 0.15) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  --padding-top: 56px; // Espacio para el ion-header del menú
+  --padding-bottom: 80px;
 }
 
-// --------------------------------------------------------------------------
-// HEADER SECTION
-// --------------------------------------------------------------------------
+// ============================================
+// SEARCH SECTION
+// ============================================
 
-.header-section {
-  padding: 80px 24px 20px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-  animation: slideInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+.search-section {
+  padding: 12px 20px 8px;
+  background: var(--slide-background);
+  backdrop-filter: blur(20px);
 
-  .header-content {
-    .pirate-decoration {
-      font-size: 3.5rem;
-      display: block;
-      margin-bottom: 8px;
-      animation: float 4s ease-in-out infinite;
-      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
-    }
+  .home-search {
+    --background: rgba(255, 255, 255, 0.08);
+    --border-radius: 24px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --placeholder-color: var(--slide-secondary-text);
+    --icon-color: var(--slide-button-background);
 
-    .main-title {
-      font-family: var(--font-primary);
-      font-size: 2.8rem;
-      font-weight: 900;
-      color: var(--slide-text-color);
-      margin: 0;
-      letter-spacing: -2px;
-      line-height: 1;
-      text-transform: uppercase;
-      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 0;
 
-      @media (min-width: 768px) {
-        font-size: 4rem;
-      }
-    }
-
-    .subtitle {
-      font-size: 1.1rem;
-      color: var(--slide-secondary-text);
-      margin: 12px 0 0;
-      font-weight: 500;
-      opacity: var(--opacity-subtle);
-      max-width: 280px;
-      margin-inline: auto;
-    }
-  }
-
-  .header-actions {
-    margin-top: 24px;
-
-    .reload-btn {
-      --background: rgba(255, 255, 255, 0.05);
-      --border-color: rgba(255, 255, 255, 0.1);
-      --color: var(--slide-text-color);
-      --border-radius: 50px;
-      --border-width: 1px;
-      --padding-start: 24px;
-      --padding-end: 24px;
-      height: 44px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 0.8rem;
-      backdrop-filter: var(--glass-blur);
-      box-shadow: var(--shadow-md);
-
-      ion-icon {
-        margin-right: 8px;
-        font-size: 1.2rem;
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
+    &::part(icon) {
+      color: var(--slide-button-background);
     }
   }
 }
 
-// --------------------------------------------------------------------------
-// PROGRESS BAR
-// --------------------------------------------------------------------------
+// ============================================
+// HERO SECTION - TRENDING
+// ============================================
 
-.progress-container {
-  padding: 0 40px;
-  margin-bottom: 30px;
+.hero-section {
   position: relative;
-  z-index: 1;
-
-  ion-progress-bar {
-    --background: rgba(255, 255, 255, 0.05);
-    --progress-background: var(--slide-button-background);
-    height: 4px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-}
-
-// --------------------------------------------------------------------------
-// SWIPER & MODERN CARDS
-// --------------------------------------------------------------------------
-
-.artist-swiper {
-  width: 100%;
-  padding-bottom: 60px;
-  z-index: 1;
-}
-
-.artist-modern-card {
-  position: relative;
-  margin: 0 20px;
-  border-radius: var(--radius-2xl);
+  height: 320px;
+  margin: 12px 20px 24px;
+  border-radius: 20px;
   overflow: hidden;
-  transition: var(--transition-bounce);
-  cursor: pointer;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 
-  &.glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: var(--glass-blur);
-    border: var(--glass-border);
-    box-shadow: var(--glass-highlight), var(--shadow-xl);
-  }
+  .hero-background {
+    position: absolute;
+    inset: 0;
 
-  &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-
-    .card-image-wrap img {
+    .hero-bg-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(8px) brightness(0.6);
       transform: scale(1.1);
     }
 
-    .play-indicator {
-      transform: translate(-50%, -50%) scale(1.2);
-      opacity: 1;
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+          rgba(0, 0, 0, 0.3) 0%,
+          rgba(0, 0, 0, 0.8) 100%);
     }
   }
 
-  &:active {
-    transform: scale(0.98);
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 32px 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 68, 68, 0.9);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      align-self: flex-start;
+      box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4);
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      font-weight: 900;
+      color: white;
+      margin: 0 0 8px;
+      line-height: 1.1;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-artist {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0 0 20px;
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      .play-btn {
+        --background: var(--slide-button-background);
+        --color: var(--slide-button-text-color);
+        --border-radius: 50px;
+        --padding-start: 28px;
+        --padding-end: 28px;
+
+        height: 48px;
+        font-weight: 800;
+        font-size: 1rem;
+        box-shadow: 0 8px 24px rgba(29, 185, 84, 0.4);
+
+        ion-icon {
+          font-size: 1.3rem;
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// QUICK ACTIONS
+// ============================================
+
+.quick-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 
-  // Contenedor de Imagen
-  .card-image-wrap {
+  .action-btn {
+    --background: rgba(255, 255, 255, 0.05);
+    --color: var(--slide-text-color);
+    --border-radius: 24px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+
+    height: 48px;
+    flex-shrink: 0;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+
+    ion-icon {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+
+    span {
+      font-size: 0.9rem;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// ============================================
+// SECTIONS LAYOUT
+// ============================================
+
+.section {
+  margin-bottom: 32px;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 16px;
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--slide-text-color);
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .reload-btn {
+      --color: var(--slide-secondary-text);
+
+      ion-icon {
+        font-size: 1.3rem;
+      }
+    }
+  }
+}
+
+// ============================================
+// GENRES GRID
+// ============================================
+
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 20px;
+
+  .genre-card {
     position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1; // Tarjetas siempre cuadradas
+    height: 100px;
+    border-radius: 12px;
     overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    h3 {
+      position: relative;
+      z-index: 2;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin: 0;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+// ============================================
+// HORIZONTAL SCROLL
+// ============================================
+
+.horizontal-scroll {
+  display: flex;
+  gap: 16px;
+  padding: 0 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// ============================================
+// PLAYLIST CARDS
+// ============================================
+
+.playlist-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 160px;
+  cursor: pointer;
+  scroll-snap-align: start;
+
+  .playlist-image {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: var(--transition-slow);
+      transition: transform 0.3s ease;
     }
 
-    .image-overlay-gradient {
+    .play-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
-    }
-
-    .play-indicator {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.8);
-      width: 80px;
-      height: 80px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: var(--radius-full);
+      background: rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transition: var(--transition-normal);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+      transition: opacity 0.3s ease;
 
       ion-icon {
-        font-size: 2.5rem;
-        color: #fff;
-        margin-left: 4px; // Óptico para el icono de play
+        font-size: 3rem;
+        color: white;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
       }
     }
   }
 
-  // Información del Artista
-  .card-info {
-    padding: 24px;
+  .playlist-info {
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--slide-text-color);
+      margin: 0 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: var(--slide-secondary-text);
+      margin: 0;
+    }
+  }
+
+  &:active .playlist-image {
+    transform: scale(0.95);
+  }
+
+  &:hover .playlist-image {
+    img {
+      transform: scale(1.05);
+    }
+
+    .play-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+// ============================================
+// ARTIST CARDS
+// ============================================
+
+.artist-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 140px;
+  cursor: pointer;
+  scroll-snap-align: start;
+
+  .artist-image {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+
+      ion-icon {
+        font-size: 2.5rem;
+        color: var(--slide-button-background);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+      }
+    }
+  }
+
+  .artist-info {
     text-align: center;
 
-    .name {
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--slide-text-color);
+      margin: 0 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: var(--slide-secondary-text);
       margin: 0;
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: var(--tracking-tight);
+    }
+  }
+
+  &:active .artist-image {
+    transform: scale(0.95);
+  }
+
+  &:hover .artist-image {
+    img {
+      transform: scale(1.1);
     }
 
-    .genre {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--slide-button-background);
-      text-transform: uppercase;
-      letter-spacing: 2px;
+    .play-overlay {
+      opacity: 1;
     }
   }
 }
 
-// --------------------------------------------------------------------------
-// SKELETON LOADING
-// --------------------------------------------------------------------------
+// ============================================
+// LOADING SKELETONS
+// ============================================
 
-.skeleton-container {
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+.loading-container {
+  padding: 20px;
 
-  .skeleton-card {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: var(--radius-2xl);
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+  .skeleton-hero {
+    margin-bottom: 24px;
+  }
 
-    .skeleton-image-wrap {
-      aspect-ratio: 1/1;
-      width: 100%;
-    }
+  .skeleton-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
 
-    .skeleton-content {
-      padding: 24px;
+  .skeleton-section {
+    margin-bottom: 32px;
+
+    .skeleton-cards {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
+      gap: 16px;
+      overflow-x: hidden;
     }
   }
 }
 
-// --------------------------------------------------------------------------
-// ANIMATIONS
-// --------------------------------------------------------------------------
+// ============================================
+// RESPONSIVE
+// ============================================
 
-@keyframes slideInDown {
+@media (min-width: 768px) {
+  .genres-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hero-section {
+    height: 380px;
+    margin: 16px 32px 32px;
+  }
+
+  .section {
+    .section-header {
+      padding: 0 32px 20px;
+    }
+  }
+
+  .horizontal-scroll {
+    padding: 0 32px;
+  }
+
+  .genres-grid {
+    padding: 0 32px;
+  }
+
+  .quick-actions {
+    padding: 0 32px 32px;
+  }
+
+  .search-section {
+    padding: 20px 32px 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .genres-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(-40px);
+    transform: translateY(20px);
   }
 
   to {
@@ -282,20 +508,17 @@ ion-content {
   }
 }
 
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-15px) rotate(5deg);
-  }
+.section {
+  animation: slideInUp 0.5s ease-out;
 }
 
-// Ripple Effect Base
-.ripple-effect {
-  position: relative;
-  overflow: hidden;
+// ============================================
+// ACCESSIBILITY
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }

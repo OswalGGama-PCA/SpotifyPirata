@@ -1,5 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonIcon,
@@ -7,6 +8,7 @@ import {
   IonButton,
   IonSkeletonText,
   IonRippleEffect,
+  IonSearchbar,
   ModalController
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
@@ -17,7 +19,11 @@ import {
   flag,
   colorWandOutline,
   playCircleOutline,
-  play
+  play,
+  heart,
+  musicalNotes,
+  people,
+  searchOutline
 } from 'ionicons/icons';
 import { ThemeService } from '../services/theme.service';
 import { MusicService } from '../services/music.service';
@@ -37,12 +43,14 @@ register();
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     IonContent,
     IonIcon,
     IonProgressBar,
     IonButton,
     IonSkeletonText,
-    IonRippleEffect
+    IonRippleEffect,
+    IonSearchbar
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -51,6 +59,12 @@ export class HomePage implements OnInit {
   progress = 0;
   artists: any[] = [];
   isLoading = true;
+
+  // Nuevas secciones
+  trendingSong: any = null;
+  playlists: any[] = [];
+  genres: any[] = [];
+  searchTerm = '';
 
   constructor(
     private themeService: ThemeService,
@@ -65,7 +79,11 @@ export class HomePage implements OnInit {
       flag,
       colorWandOutline,
       playCircleOutline,
-      play
+      play,
+      heart,
+      musicalNotes,
+      people,
+      searchOutline
     });
   }
 
@@ -74,17 +92,87 @@ export class HomePage implements OnInit {
       this.currentTheme = theme;
     });
 
-    this.loadArtists();
+    this.loadAllContent();
+  }
+
+  /**
+   * Carga todo el contenido de la página
+   */
+  async loadAllContent() {
+    this.isLoading = true;
+    await Promise.all([
+      this.loadArtists(),
+      this.loadTrendingSong(),
+      this.loadGenres(),
+      this.loadPlaylists()
+    ]);
+    this.isLoading = false;
+  }
+
+  /**
+   * Carga la canción trending del momento
+   */
+  async loadTrendingSong() {
+    this.deezerService.searchTracks('top hits 2024').subscribe({
+      next: (data: any[]) => {
+        if (data && data.length > 0) {
+          const track = data[0];
+          this.trendingSong = {
+            id: track.id,
+            title: track.title,
+            artist: track.artist.name,
+            albumArt: track.album.cover_xl || track.album.cover_big,
+            preview: track.preview
+          };
+        }
+      },
+      error: (err) => console.error('Error loading trending:', err)
+    });
+  }
+
+  /**
+   * Carga géneros musicales populares
+   */
+  loadGenres() {
+    this.genres = [
+      { id: 1, name: 'Rock', image: 'assets/genres/rock.jpg', color: '#E13300' },
+      { id: 2, name: 'Pop', image: 'assets/genres/pop.jpg', color: '#FF6B9D' },
+      { id: 3, name: 'Hip Hop', image: 'assets/genres/hiphop.jpg', color: '#FFD700' },
+      { id: 4, name: 'Electrónica', image: 'assets/genres/electronic.jpg', color: '#00D9FF' },
+      { id: 5, name: 'Jazz', image: 'assets/genres/jazz.jpg', color: '#8E44AD' },
+      { id: 6, name: 'Reggaeton', image: 'assets/genres/reggaeton.jpg', color: '#1DB954' }
+    ];
+  }
+
+  /**
+   * Carga playlists destacadas
+   */
+  async loadPlaylists() {
+    const playlistQueries = ['workout', 'chill', 'party', 'study'];
+
+    for (const query of playlistQueries) {
+      this.deezerService.searchTracks(query).subscribe({
+        next: (data: any[]) => {
+          if (data && data.length > 0) {
+            const track = data[0];
+            this.playlists.push({
+              id: this.playlists.length + 1,
+              name: `${query.charAt(0).toUpperCase() + query.slice(1)} Mix`,
+              image: track.album.cover_medium,
+              trackCount: Math.floor(Math.random() * 50) + 20
+            });
+          }
+        }
+      });
+    }
   }
 
   /**
    * Carga los artistas con mapeo defensivo para evitar "undefined"
    */
   async loadArtists() {
-    this.isLoading = true;
     this.musicService.getArtists().subscribe({
       next: (data: any) => {
-        // Mapeo defensivo: asegura que 'title' e 'img' existan para el HTML
         const artistsData = Array.isArray(data) ? data : (data.artists || []);
 
         this.artists = artistsData.map((a: any) => ({
@@ -94,13 +182,67 @@ export class HomePage implements OnInit {
           genre: (a.genres && a.genres.length > 0) ? a.genres[0] : 'Género variado',
           followers: a.followers || 0
         }));
-
-        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error al cargar artistas:', err);
-        this.isLoading = false;
       }
+    });
+  }
+
+  /**
+   * Búsqueda rápida
+   */
+  quickSearch(event: any) {
+    const query = event.target.value;
+    if (query && query.length > 2) {
+      this.router.navigate(['/menu/music'], {
+        queryParams: { q: query }
+      });
+    }
+  }
+
+  /**
+   * Navega a una sección específica
+   */
+  navigateTo(section: string) {
+    switch (section) {
+      case 'favorites':
+        this.router.navigate(['/menu/library']);
+        break;
+      case 'music':
+        this.router.navigate(['/menu/music']);
+        break;
+      case 'artists':
+        this.router.navigate(['/menu/artists']);
+        break;
+    }
+  }
+
+  /**
+   * Reproduce la canción trending
+   */
+  playTrending() {
+    if (this.trendingSong) {
+      // Aquí podrías integrar con un servicio de audio global
+      console.log('Playing:', this.trendingSong);
+    }
+  }
+
+  /**
+   * Navega a un género específico
+   */
+  exploreGenre(genre: any) {
+    this.router.navigate(['/menu/music'], {
+      queryParams: { q: genre.name }
+    });
+  }
+
+  /**
+   * Abre una playlist
+   */
+  openPlaylist(playlist: any) {
+    this.router.navigate(['/menu/music'], {
+      queryParams: { q: playlist.name }
     });
   }
 
@@ -108,12 +250,10 @@ export class HomePage implements OnInit {
    * Muestra las canciones del artista usando la API de Deezer (Data Real)
    */
   async showSongsByArtist(artist: any) {
-    // Usamos el nombre del artista para buscar sus canciones en Deezer
     const query = `artist:"${artist.title}"`;
 
     this.deezerService.searchTracks(query).subscribe({
       next: async (data: any[]) => {
-        // Limitamos a 5 canciones para el modal
         const mappedSongs = data.slice(0, 5).map(track => ({
           id: track.id,
           name: track.title,
@@ -135,7 +275,6 @@ export class HomePage implements OnInit {
 
         await modal.present();
 
-        // Manejamos el cierre del modal para saber si quiere ir a ver más
         const { data: modalResult } = await modal.onDidDismiss();
         if (modalResult?.goToMusic) {
           this.router.navigate(['/menu/music'], {
@@ -159,7 +298,7 @@ export class HomePage implements OnInit {
   async reloadArtists() {
     this.artists = [];
     this.musicService.refreshArtists().subscribe({
-      next: (data) => this.loadArtists() // Recargamos usando el mapeo defensivo
+      next: (data) => this.loadArtists()
     });
   }
 
