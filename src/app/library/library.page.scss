@@ -105,6 +105,19 @@ ion-content {
         }
     }
 
+    &.no-preview {
+        opacity: 0.5;
+        cursor: not-allowed;
+
+        &:hover {
+            --background: transparent;
+        }
+
+        .album-art {
+            filter: grayscale(100%);
+        }
+    }
+
     // Track Number
     .track-number {
         width: 24px;
@@ -217,6 +230,7 @@ ion-content {
     left: 0;
     right: 0;
     background: rgba(18, 18, 18, 0.98);
+    -webkit-backdrop-filter: var(--glass-blur);
     backdrop-filter: var(--glass-blur);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 100;

@@ -9,7 +9,6 @@ ion-content {
 
     &::part(scroll) {
         overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -21,6 +20,7 @@ ion-content {
     background: var(--slide-background);
     padding: 16px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     position: sticky;
     top: 0;
@@ -130,25 +130,18 @@ ion-content {
         }
     }
 
-    // Track Number
-    .track-number {
-        width: 24px;
-        text-align: center;
-        margin-right: 16px;
+        &.no-preview {
+            opacity: 0.5;
+            cursor: not-allowed;
 
-        .number {
-            color: var(--slide-secondary-text);
-            font-size: 0.9rem;
-            font-weight: 600;
+            &:hover {
+                --background: transparent;
+            }
+
+            .album-art {
+                filter: grayscale(100%);
+            }
         }
-
-        .playing-icon {
-            color: var(--slide-button-background);
-            font-size: 1.2rem;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-    }
-
     // Album Art
     .album-art {
         --size: 56px;
@@ -276,6 +269,14 @@ ion-content {
 .skeleton-item {
     --background: transparent;
     margin-bottom: 12px;
+
+    .skeleton-title {
+        width: 60%;
+    }
+
+    .skeleton-subtitle {
+        width: 40%;
+    }
 }
 
 // ============================================
@@ -288,6 +289,7 @@ ion-content {
     left: 0;
     right: 0;
     background: linear-gradient(to top, rgba(18, 18, 18, 0.98) 0%, rgba(18, 18, 18, 0.95) 100%);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1000;

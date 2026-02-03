@@ -23,18 +23,19 @@
 
     <ion-list lines="none" class="track-list">
       <ion-item *ngFor="let track of favorites; let i = index" class="track-item"
-        [class.playing]="currentTrack?.id === track.id" (click)="togglePlay(track)">
+        [class.playing]="(currentTrack$ | async)?.id === track.id" [class.no-preview]="!hasPreview(track)"
+        (click)="hasPreview(track) ? togglePlay(track) : null">
 
         <!-- Track Number / Play Indicator -->
         <div slot="start" class="track-number">
-          <span *ngIf="currentTrack?.id !== track.id" class="number">{{ i + 1 }}</span>
-          <ion-icon *ngIf="currentTrack?.id === track.id && isPlaying" name="pause" class="playing-icon"></ion-icon>
-          <ion-icon *ngIf="currentTrack?.id === track.id && !isPlaying" name="play" class="playing-icon"></ion-icon>
+          <span *ngIf="(currentTrack$ | async)?.id !== track.id" class="number">{{ i + 1 }}</span>
+          <ion-icon *ngIf="(currentTrack$ | async)?.id === track.id && (isPlaying$ | async)" name="pause" class="playing-icon"></ion-icon>
+          <ion-icon *ngIf="(currentTrack$ | async)?.id === track.id && !(isPlaying$ | async)" name="play" class="playing-icon"></ion-icon>
         </div>
 
         <!-- Album Art -->
         <ion-thumbnail slot="start" class="album-art">
-          <img [src]="getAlbumCover(track)" [alt]="track.title || 'Album cover'" (error)="onImageError($event)">
+          <img [src]="getAlbumCover(track)" [alt]="track.title || 'Album cover'" title="Album cover" (error)="onImageError($event)">
           <div class="play-overlay">
             <ion-icon name="play-circle"></ion-icon>
           </div>
@@ -49,6 +50,7 @@
         <!-- Actions -->
         <div slot="end" class="actions">
           <span class="duration" *ngIf="track.duration">{{ formatDuration(track.duration) }}</span>
+          <ion-badge color="medium" *ngIf="!hasPreview(track)">Sin preview</ion-badge>
           <ion-button fill="clear" (click)="removeFavorite($event, track)" class="delete-btn">
             <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
@@ -56,40 +58,4 @@
       </ion-item>
     </ion-list>
   </div>
-
-  <!-- Spacer for floating player -->
-  <div class="player-spacer" *ngIf="currentTrack"></div>
 </ion-content>
-
-<!-- Floating Player -->
-<div class="floating-player" *ngIf="currentTrack">
-  <div class="player-content">
-    <!-- Current Track Info -->
-    <div class="current-track-info">
-      <img [src]="getAlbumCover(currentTrack, 'small')" alt="Album" class="mini-cover" (error)="onImageError($event)">
-      <div class="track-details">
-        <h3>{{ currentTrack.title || currentTrack.name }}</h3>
-        <p>{{ getArtistName(currentTrack) }}</p>
-      </div>
-    </div>
-
-    <!-- Player Controls -->
-    <div class="player-controls">
-      <ion-button fill="clear" (click)="togglePlay(currentTrack)" class="play-btn">
-        <ion-icon [name]="isPlaying ? 'pause-circle' : 'play-circle'" size="large"></ion-icon>
-      </ion-button>
-    </div>
-
-    <!-- Actions -->
-    <div class="player-actions">
-      <ion-button fill="clear" (click)="removeFavorite($event, currentTrack)" class="delete-btn">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-    </div>
-  </div>
-
-  <!-- Progress Bar -->
-  <div class="progress-bar">
-    <div class="progress-fill" [style.width.%]="getProgress()"></div>
-  </div>
-</div>

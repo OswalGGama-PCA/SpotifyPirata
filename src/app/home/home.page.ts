@@ -25,8 +25,8 @@ import {
   searchOutline
 } from 'ionicons/icons';
 import { ThemeService } from '../services/theme.service';
-import { MusicService } from '../services/music.service';
-import { DeezerService } from '../services/deezer.service';
+import { JamendoService } from '../services/jamendo.service';
+import { PlayerService } from '../services/player.service';
 import { SongsModalPage } from '../songs-modal/songs-modal.page';
 
 // 1. Import register to initialize Swiper Web Components
@@ -66,8 +66,8 @@ export class HomePage implements OnInit {
 
   constructor(
     private themeService: ThemeService,
-    private musicService: MusicService,
-    private deezerService: DeezerService,
+    private jamendoService: JamendoService,
+    private playerService: PlayerService,
     private modalController: ModalController,
     private router: Router
   ) {
@@ -108,19 +108,19 @@ export class HomePage implements OnInit {
   }
 
   /**
-   * Carga la canción trending del momento
+   * Carga la canción trending del momento usando Jamendo
    */
   async loadTrendingSong() {
-    this.deezerService.searchTracks('top hits 2024').subscribe({
-      next: (data: any[]) => {
-        if (data && data.length > 0) {
-          const track = data[0];
+    this.jamendoService.getPopularTracks(1).subscribe({
+      next: (tracks) => {
+        if (tracks && tracks.length > 0) {
+          const track = tracks[0];
           this.trendingSong = {
             id: track.id,
-            title: track.title,
-            artist: track.artist.name,
-            albumArt: track.album.cover_xl || track.album.cover_big,
-            preview: track.preview
+            title: track.name,
+            artist: track.artist_name,
+            albumArt: track.album_image || track.image,
+            preview: track.audio
           };
         }
       },
@@ -143,20 +143,20 @@ export class HomePage implements OnInit {
   }
 
   /**
-   * Carga playlists destacadas
+   * Carga playlists destacadas usando Jamendo tags
    */
   async loadPlaylists() {
-    const playlistQueries = ['workout', 'chill', 'party', 'study'];
+    const playlistTags = ['workout', 'chill', 'party', 'study'];
 
-    for (const query of playlistQueries) {
-      this.deezerService.searchTracks(query).subscribe({
-        next: (data: any[]) => {
-          if (data && data.length > 0) {
-            const track = data[0];
+    for (const tag of playlistTags) {
+      this.jamendoService.getTracksByTag(tag, 1).subscribe({
+        next: (tracks) => {
+          if (tracks && tracks.length > 0) {
+            const track = tracks[0];
             this.playlists.push({
               id: this.playlists.length + 1,
-              name: `${query.charAt(0).toUpperCase() + query.slice(1)} Mix`,
-              image: track.album.cover_medium,
+              name: `${tag.charAt(0).toUpperCase() + tag.slice(1)} Mix`,
+              image: track.album_image || track.image || 'assets/default-playlist.png',
               trackCount: Math.floor(Math.random() * 50) + 20
             });
           }
@@ -166,19 +166,17 @@ export class HomePage implements OnInit {
   }
 
   /**
-   * Carga los artistas con mapeo defensivo para evitar "undefined"
+   * Carga artistas populares desde Jamendo
    */
   async loadArtists() {
-    this.musicService.getArtists().subscribe({
-      next: (data: any) => {
-        const artistsData = Array.isArray(data) ? data : (data.artists || []);
-
-        this.artists = artistsData.map((a: any) => ({
+    this.jamendoService.searchArtists('popular', 10).subscribe({
+      next: (artists) => {
+        this.artists = artists.map((a: any) => ({
           id: a.id,
-          title: a.name || a.title || 'Artista desconocido',
-          img: a.image || a.img || a.avatar || 'assets/default-artist.png',
-          genre: (a.genres && a.genres.length > 0) ? a.genres[0] : 'Género variado',
-          followers: a.followers || 0
+          title: a.name || 'Artista desconocido',
+          img: a.image || 'assets/default-artist.png',
+          genre: 'Varios',
+          followers: 0
         }));
       },
       error: (err) => {
@@ -220,9 +218,15 @@ export class HomePage implements OnInit {
    * Reproduce la canción trending
    */
   playTrending() {
-    if (this.trendingSong) {
-      // Aquí podrías integrar con un servicio de audio global
-      console.log('Playing:', this.trendingSong);
+    if (this.trendingSong && this.trendingSong.preview) {
+      this.playerService.playTrack({
+        id: this.trendingSong.id,
+        name: this.trendingSong.title,
+        title: this.trendingSong.title,
+        artist: this.trendingSong.artist,
+        album_art: this.trendingSong.albumArt,
+        preview_url: this.trendingSong.preview
+      });
     }
   }
 
@@ -245,19 +249,17 @@ export class HomePage implements OnInit {
   }
 
   /**
-   * Muestra las canciones del artista usando la API de Deezer (Data Real)
+   * Muestra las canciones del artista usando Jamendo
    */
   async showSongsByArtist(artist: any) {
-    const query = `artist:"${artist.title}"`;
-
-    this.deezerService.searchTracks(query).subscribe({
-      next: async (data: any[]) => {
-        const mappedSongs = data.slice(0, 5).map(track => ({
+    this.jamendoService.searchTracks(artist.title, 10).subscribe({
+      next: async (tracks) => {
+        const mappedSongs = tracks.slice(0, 5).map(track => ({
           id: track.id,
-          name: track.title,
-          album: track.album.title,
-          image: track.album.cover_medium,
-          preview: track.preview
+          name: track.name,
+          album: track.album_name || 'Álbum Desconocido',
+          image: track.album_image || track.image || 'assets/default-album.png',
+          preview: track.audio
         }));
 
         const modal = await this.modalController.create({
@@ -280,8 +282,8 @@ export class HomePage implements OnInit {
           });
         }
       },
-      error: (err) => {
-        console.error('Error al cargar canciones de Deezer:', err);
+      error: (err: any) => {
+        console.error('Error al cargar canciones de Jamendo:', err);
       }
     });
   }
@@ -295,9 +297,7 @@ export class HomePage implements OnInit {
 
   async reloadArtists() {
     this.artists = [];
-    this.musicService.refreshArtists().subscribe({
-      next: (data) => this.loadArtists()
-    });
+    await this.loadArtists();
   }
 
   getCurrentThemeLabel(): string {

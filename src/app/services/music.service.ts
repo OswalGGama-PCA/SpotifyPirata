@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 
 /**
  * Servicio para conectar con la API de Música (Rails)
@@ -75,8 +75,24 @@ export class MusicService {
 
   /**
    * Busca canciones por término
+   * Devuelve un array de tracks compatible con la estructura esperada
    */
-  searchTracks(query: string): Observable<any> {
-    return this.http.post(`${this.BASE_URL}/search_track`, { q: query });
+  searchTracks(query: string): Observable<any[]> {
+    return this.http.post<any>(`${this.BASE_URL}/search_track`, { q: query }).pipe(
+      tap(response => {
+        console.log('🔍 Respuesta completa de search_track:', response);
+        console.log('🔍 Tipo de respuesta:', typeof response, Array.isArray(response));
+      }),
+      map(response => {
+        // La API puede devolver { tracks: [...] } o directamente un array
+        const tracks = Array.isArray(response) ? response : (response.tracks || []);
+        console.log('🎵 Tracks procesados:', tracks);
+        return tracks;
+      }),
+      catchError(error => {
+        console.error('❌ Error searching tracks:', error);
+        return of([]);
+      })
+    );
   }
 }

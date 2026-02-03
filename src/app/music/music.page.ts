@@ -14,7 +14,8 @@ import {
   IonChip,
   IonBadge
 } from '@ionic/angular/standalone';
-import { DeezerService } from '../services/deezer.service';
+import { JamendoService } from '../services/jamendo.service';
+import { PlayerService } from '../services/player.service';
 import { addIcons } from 'ionicons';
 import { FavoritesService } from '../services/favorites.service';
 import {
@@ -30,10 +31,10 @@ import {
   shuffle,
   repeat,
   list,
-  closeCircle
-} from 'ionicons/icons';
+  closeCircle, playCircle } from 'ionicons/icons';
 
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-music',
@@ -61,10 +62,11 @@ export class MusicPage implements OnInit, OnDestroy {
   searchTerm: string = '';
   isLoading: boolean = false;
 
-  // Audio Player State
-  currentTrack: any = null;
-  isPlaying: boolean = false;
-  audio = new Audio();
+  // Observables del PlayerService
+  currentTrack$ = this.playerService.currentTrack$;
+  isPlaying$ = this.playerService.isPlaying$;
+
+  private subscriptions = new Subscription();
 
   // Nuevas funcionalidades
   searchFilter: string = 'all'; // all, track, album, artist, playlist
@@ -77,25 +79,12 @@ export class MusicPage implements OnInit, OnDestroy {
   repeatMode: 'off' | 'all' | 'one' = 'off';
 
   constructor(
-    private deezerService: DeezerService,
+    private jamendoService: JamendoService,
     private route: ActivatedRoute,
-    private favoritesService: FavoritesService
+    private favoritesService: FavoritesService,
+    private playerService: PlayerService
   ) {
-    addIcons({
-      play,
-      pause,
-      musicalNotes,
-      timeOutline,
-      searchOutline,
-      heart,
-      heartOutline,
-      playSkipForward,
-      playSkipBack,
-      shuffle,
-      repeat,
-      list,
-      closeCircle
-    });
+    addIcons({searchOutline,timeOutline,closeCircle,musicalNotes,pause,play,playCircle,shuffle,playSkipBack,playSkipForward,repeat,list,heart,heartOutline});
 
     // Cargar búsquedas recientes del localStorage
     const saved = localStorage.getItem('recentSearches');
@@ -106,7 +95,7 @@ export class MusicPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Detectar si venimos con una búsqueda predefinida
-    this.route.queryParams.subscribe(params => {
+    const queryParams = this.route.queryParams.subscribe(params => {
       if (params['q']) {
         const query = params['q'];
         this.searchTerm = query;
@@ -116,17 +105,11 @@ export class MusicPage implements OnInit, OnDestroy {
         this.search('Top Hits 2024');
       }
     });
-
-    // Event listeners para el audio
-    this.audio.addEventListener('ended', () => this.onTrackEnded());
-    this.audio.addEventListener('timeupdate', () => this.updateProgress());
+    this.subscriptions.add(queryParams);
   }
 
   ngOnDestroy() {
-    if (this.audio) {
-      this.audio.pause();
-      this.audio.src = '';
-    }
+    this.subscriptions.unsubscribe();
   }
 
   isFavorite(track: any): boolean {
@@ -152,14 +135,29 @@ export class MusicPage implements OnInit, OnDestroy {
     // Agregar a búsquedas recientes
     this.addToRecentSearches(query);
 
-    this.deezerService.searchTracks(query).subscribe({
-      next: (data) => {
-        this.tracks = data;
-        this.queue = [...data]; // Inicializar cola con resultados
+    // Buscar en Jamendo
+    this.jamendoService.searchTracks(query).subscribe({
+      next: (jamendoTracks) => {
+        // Convertir tracks de Jamendo al formato de la app
+        this.tracks = jamendoTracks.map(track => ({
+          id: track.id,
+          title: track.name,
+          artist: track.artist_name,
+          album: track.album_name,
+          album_art: track.album_image || track.image,
+          preview_url: track.audio,
+          duration: track.duration,
+          external_id: `jamendo:${track.id}`,
+          source: 'jamendo',
+          jamendo_data: track // Guardar datos originales
+        }));
+
+        this.queue = [...this.tracks];
         this.isLoading = false;
+        console.log(`🎵 ${this.tracks.length} tracks encontrados en Jamendo`);
       },
       error: (err) => {
-        console.error('Error buscando en Deezer:', err);
+        console.error('Error buscando canciones en Jamendo:', err);
         this.isLoading = false;
       }
     });
@@ -187,34 +185,18 @@ export class MusicPage implements OnInit, OnDestroy {
     localStorage.setItem('recentSearches', JSON.stringify(this.recentSearches));
   }
 
-  togglePlay(track: any) {
-    // Si es la misma canción, pausar/reanudar
-    if (this.currentTrack?.id === track.id) {
-      if (this.isPlaying) {
-        this.audio.pause();
-        this.isPlaying = false;
-      } else {
-        this.audio.play();
-        this.isPlaying = true;
-      }
-      return;
-    }
+  hasPreview(track: any): boolean {
+    return !!(track?.preview_url || track?.preview);
+  }
 
-    // Nueva canción
-    this.playTrack(track);
+  togglePlay(track: any) {
+    this.playerService.playTrack(track);
   }
 
   playTrack(track: any) {
-    if (this.audio) {
-      this.audio.pause();
-    }
-
-    this.currentTrack = track;
+    // En Jamendo todos los tracks tienen audio completo
     this.currentIndex = this.queue.findIndex(t => t.id === track.id);
-    this.audio.src = track.preview;
-    this.audio.load();
-    this.audio.play();
-    this.isPlaying = true;
+    this.playerService.playTrack(track);
   }
 
   playNext() {
@@ -251,7 +233,6 @@ export class MusicPage implements OnInit, OnDestroy {
     } else {
       // Restaurar orden original
       this.queue = [...this.tracks];
-      this.currentIndex = this.queue.findIndex(t => t.id === this.currentTrack?.id);
     }
   }
 
@@ -262,17 +243,6 @@ export class MusicPage implements OnInit, OnDestroy {
       this.repeatMode = 'one';
     } else {
       this.repeatMode = 'off';
-    }
-  }
-
-  onTrackEnded() {
-    if (this.repeatMode === 'one') {
-      this.audio.currentTime = 0;
-      this.audio.play();
-    } else if (this.repeatMode === 'all' || this.currentIndex < this.queue.length - 1) {
-      this.playNext();
-    } else {
-      this.isPlaying = false;
     }
   }
 
@@ -293,35 +263,5 @@ export class MusicPage implements OnInit, OnDestroy {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }
-
-  formatCurrentTime(): string {
-    if (!this.audio || !this.audio.currentTime) return '0:00';
-    return this.formatDuration(Math.floor(this.audio.currentTime));
-  }
-
-  formatTotalTime(): string {
-    if (!this.audio || !this.audio.duration) return '0:00';
-    return this.formatDuration(Math.floor(this.audio.duration));
-  }
-
-  getProgress(): number {
-    if (!this.audio || !this.audio.duration) return 0;
-    return (this.audio.currentTime / this.audio.duration) * 100;
-  }
-
-  updateProgress() {
-    // Forzar detección de cambios para la barra de progreso
-  }
-
-  seekTo(event: any) {
-    const progressBar = event.target;
-    const clickX = event.offsetX;
-    const width = progressBar.offsetWidth;
-    const percentage = clickX / width;
-
-    if (this.audio && this.audio.duration) {
-      this.audio.currentTime = this.audio.duration * percentage;
-    }
   }
 }

@@ -1,0 +1,43 @@
+<div class="floating-player" *ngIf="currentTrack">
+  <!-- Current Track Info -->
+  <div class="player-content">
+    <div class="current-track-info">
+      <ion-thumbnail class="mini-cover">
+        <img
+          [src]="currentTrack.album_art || currentTrack.image || 'assets/default-album.png'"
+          alt="Album"
+          (error)="$event.target.src = 'assets/default-album.png'"
+        />
+      </ion-thumbnail>
+      <div class="track-details">
+        <h3>{{ currentTrack.title || currentTrack.name }}</h3>
+        <p>{{ currentTrack.artist }}</p>
+      </div>
+    </div>
+
+    <!-- Player Controls -->
+    <div class="player-controls">
+      <ion-button fill="clear" (click)="togglePlay()" class="play-btn">
+        <ion-icon [name]="isPlaying ? 'pause-circle' : 'play-circle'" size="large"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Close Button -->
+    <div class="player-actions">
+      <ion-button fill="clear" (click)="close()" class="close-btn">
+        <ion-icon name="close-circle"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container" (click)="seek($event)">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="getProgress()"></div>
+    </div>
+    <div class="time-info">
+      <span class="current-time">{{ formatTime(progress) }}</span>
+      <span class="duration-time">{{ formatTime(duration) }}</span>
+    </div>
+  </div>
+</div>

@@ -5,7 +5,7 @@
     <!-- ============================================ -->
     <div class="search-section">
         <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="handleSearch($event)" animated="true"
-            placeholder="Buscar canciones, artistas, álbumes..." inputmode="search" type="search"
+            placeholder="Buscar canciones, artistas, álbumes..." type="search"
             class="custom-searchbar">
         </ion-searchbar>
 
@@ -47,8 +47,8 @@
                     <ion-skeleton-text animated></ion-skeleton-text>
                 </ion-thumbnail>
                 <ion-label>
-                    <h3><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></h3>
-                    <p><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></p>
+                    <h3><ion-skeleton-text animated class="skeleton-title"></ion-skeleton-text></h3>
+                    <p><ion-skeleton-text animated class="skeleton-subtitle"></ion-skeleton-text></p>
                 </ion-label>
             </ion-item>
         </ion-list>
@@ -81,20 +81,21 @@
         <!-- Songs List -->
         <ion-list lines="none" class="songs-list">
             <ion-item *ngFor="let track of tracks; let i = index" class="song-item"
-                [class.active]="currentTrack?.id === track.id" (click)="togglePlay(track)">
+                [class.active]="(currentTrack$ | async)?.id === track.id" [class.no-preview]="!hasPreview(track)"
+                (click)="hasPreview(track) ? togglePlay(track) : null">
 
                 <!-- Track Number / Playing Indicator -->
                 <div slot="start" class="track-number">
-                    <span *ngIf="currentTrack?.id !== track.id" class="number">{{ i + 1 }}</span>
-                    <ion-icon *ngIf="currentTrack?.id === track.id && isPlaying" name="pause" class="playing-icon">
+                    <span *ngIf="(currentTrack$ | async)?.id !== track.id" class="number">{{ i + 1 }}</span>
+                    <ion-icon *ngIf="(currentTrack$ | async)?.id === track.id && (isPlaying$ | async)" name="pause" class="playing-icon">
                     </ion-icon>
-                    <ion-icon *ngIf="currentTrack?.id === track.id && !isPlaying" name="play" class="playing-icon">
+                    <ion-icon *ngIf="(currentTrack$ | async)?.id === track.id && !(isPlaying$ | async)" name="play" class="playing-icon">
                     </ion-icon>
                 </div>
 
                 <!-- Album Art -->
                 <ion-thumbnail slot="start" class="album-art">
-                    <img [src]="track.album.cover_medium || track.album.cover" alt="Album">
+                    <img [src]="track.album_art || track.image || 'assets/default-album.png'" alt="Album">
                     <div class="play-overlay">
                         <ion-icon name="play-circle"></ion-icon>
                     </div>
@@ -103,12 +104,13 @@
                 <!-- Song Info -->
                 <ion-label>
                     <h2 class="track-title">{{ track.title }}</h2>
-                    <p class="track-artist">{{ track.artist.name }}</p>
+                    <p class="track-artist">{{ track.artist }}</p>
                 </ion-label>
 
                 <!-- Duration & Favorite -->
                 <div slot="end" class="actions">
                     <span class="duration" *ngIf="track.duration">{{ formatDuration(track.duration) }}</span>
+                    <ion-badge color="medium" *ngIf="!hasPreview(track)">Sin preview</ion-badge>
                     <ion-button (click)="toggleFavorite($event, track)" fill="clear" class="favorite-btn"
                         [class.is-favorite]="isFavorite(track)">
                         <ion-icon [name]="isFavorite(track) ? 'heart' : 'heart-outline'"></ion-icon>
@@ -117,115 +119,4 @@
             </ion-item>
         </ion-list>
     </div>
-
-    <!-- Spacer for floating player -->
-    <div class="player-spacer" *ngIf="currentTrack"></div>
 </ion-content>
-
-<!-- ============================================ -->
-<!-- FLOATING PLAYER - ENHANCED -->
-<!-- ============================================ -->
-<div class="floating-player" *ngIf="currentTrack">
-
-    <!-- Progress Bar (clickeable) -->
-    <div class="progress-bar-container" (click)="seekTo($event)">
-        <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="getProgress()"></div>
-        </div>
-        <div class="time-labels">
-            <span class="current-time">{{ formatCurrentTime() }}</span>
-            <span class="total-time">{{ formatTotalTime() }}</span>
-        </div>
-    </div>
-
-    <div class="player-content">
-        <!-- Current Track Info -->
-        <div class="current-track-info">
-            <img [src]="currentTrack.album.cover_small" alt="Album" class="mini-cover">
-            <div class="track-details">
-                <h3>{{ currentTrack.title }}</h3>
-                <p>{{ currentTrack.artist.name }}</p>
-            </div>
-        </div>
-
-        <!-- Player Controls -->
-        <div class="player-controls">
-            <!-- Shuffle -->
-            <ion-button fill="clear" (click)="toggleShuffle()" class="control-btn" [class.active]="isShuffleOn">
-                <ion-icon name="shuffle"></ion-icon>
-            </ion-button>
-
-            <!-- Previous -->
-            <ion-button fill="clear" (click)="playPrevious()" class="control-btn">
-                <ion-icon name="play-skip-back"></ion-icon>
-            </ion-button>
-
-            <!-- Play/Pause -->
-            <ion-button fill="clear" (click)="togglePlay(currentTrack)" class="play-btn">
-                <ion-icon [name]="isPlaying ? 'pause-circle' : 'play-circle'" size="large"></ion-icon>
-            </ion-button>
-
-            <!-- Next -->
-            <ion-button fill="clear" (click)="playNext()" class="control-btn">
-                <ion-icon name="play-skip-forward"></ion-icon>
-            </ion-button>
-
-            <!-- Repeat -->
-            <ion-button fill="clear" (click)="toggleRepeat()" class="control-btn" [class.active]="repeatMode !== 'off'">
-                <ion-icon name="repeat"></ion-icon>
-                <ion-badge *ngIf="repeatMode === 'one'" class="repeat-badge">1</ion-badge>
-            </ion-button>
-        </div>
-
-        <!-- Player Actions -->
-        <div class="player-actions">
-            <!-- Queue -->
-            <ion-button fill="clear" (click)="toggleQueue()" class="action-btn" [class.active]="showQueue">
-                <ion-icon name="list"></ion-icon>
-                <ion-badge *ngIf="queue.length > 0">{{ queue.length }}</ion-badge>
-            </ion-button>
-
-            <!-- Favorite -->
-            <ion-button fill="clear" (click)="toggleFavorite($event, currentTrack)" class="favorite-btn"
-                [class.is-favorite]="isFavorite(currentTrack)">
-                <ion-icon [name]="isFavorite(currentTrack) ? 'heart' : 'heart-outline'"></ion-icon>
-            </ion-button>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================ -->
-<!-- QUEUE MODAL -->
-<!-- ============================================ -->
-<div class="queue-modal" *ngIf="showQueue" (click)="toggleQueue()">
-    <div class="queue-content" (click)="$event.stopPropagation()">
-        <div class="queue-header">
-            <h2>Cola de Reproducción</h2>
-            <ion-button fill="clear" (click)="toggleQueue()">
-                <ion-icon name="close-circle"></ion-icon>
-            </ion-button>
-        </div>
-
-        <ion-list lines="none" class="queue-list">
-            <ion-item *ngFor="let track of queue; let i = index" class="queue-item" [class.current]="i === currentIndex"
-                (click)="playTrack(track); toggleQueue()">
-
-                <div slot="start" class="queue-number">
-                    <span *ngIf="i !== currentIndex">{{ i + 1 }}</span>
-                    <ion-icon *ngIf="i === currentIndex" name="musical-notes" color="primary"></ion-icon>
-                </div>
-
-                <ion-thumbnail slot="start">
-                    <img [src]="track.album.cover_small" alt="Album">
-                </ion-thumbnail>
-
-                <ion-label>
-                    <h3>{{ track.title }}</h3>
-                    <p>{{ track.artist.name }}</p>
-                </ion-label>
-
-                <span slot="end" class="duration">{{ formatDuration(track.duration) }}</span>
-            </ion-item>
-        </ion-list>
-    </div>
-</div>

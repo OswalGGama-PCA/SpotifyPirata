@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -13,11 +13,14 @@ import {
   IonIcon,
   IonButton,
   IonButtons,
-  IonMenuButton
+  IonMenuButton,
+  IonBadge
 } from '@ionic/angular/standalone';
 import { FavoritesService } from '../services/favorites.service';
+import { PlayerService } from '../services/player.service';
 import { addIcons } from 'ionicons';
-import { play, pause, trashOutline, musicalNotes } from 'ionicons/icons';
+import { play, pause, trashOutline, musicalNotes, playCircle, pauseCircle } from 'ionicons/icons';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-library',
@@ -25,6 +28,8 @@ import { play, pause, trashOutline, musicalNotes } from 'ionicons/icons';
   styleUrls: ['./library.page.scss'],
   standalone: true,
   imports: [
+    CommonModule,
+    FormsModule,
     IonContent,
     IonHeader,
     IonTitle,
@@ -37,53 +42,42 @@ import { play, pause, trashOutline, musicalNotes } from 'ionicons/icons';
     IonButton,
     IonButtons,
     IonMenuButton,
-    CommonModule,
-    FormsModule
+    IonBadge
   ]
 })
-export class LibraryPage implements OnInit {
+export class LibraryPage implements OnInit, OnDestroy {
   favorites: any[] = [];
 
-  // Audio Player State
-  currentTrack: any = null;
-  isPlaying: boolean = false;
-  audio = new Audio();
+  // Observables del PlayerService
+  currentTrack$ = this.playerService.currentTrack$;
+  isPlaying$ = this.playerService.isPlaying$;
 
-  constructor(private favoritesService: FavoritesService) {
-    addIcons({ play, pause, trashOutline, musicalNotes });
+  private subscriptions = new Subscription();
+
+  constructor(
+    private favoritesService: FavoritesService,
+    private playerService: PlayerService
+  ) {
+    addIcons({ play, pause, trashOutline, musicalNotes, playCircle, pauseCircle });
   }
 
   ngOnInit() {
-    this.favoritesService.favorites$.subscribe(favs => {
+    const favSub = this.favoritesService.favorites$.subscribe(favs => {
       this.favorites = favs;
     });
+    this.subscriptions.add(favSub);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   togglePlay(track: any) {
-    if (this.currentTrack?.id === track.id) {
-      if (this.isPlaying) {
-        this.audio.pause();
-        this.isPlaying = false;
-      } else {
-        this.audio.play();
-        this.isPlaying = true;
-      }
-      return;
-    }
+    this.playerService.playTrack(track);
+  }
 
-    if (this.audio) {
-      this.audio.pause();
-    }
-
-    this.currentTrack = track;
-    this.audio.src = track.preview;
-    this.audio.load();
-    this.audio.play();
-    this.isPlaying = true;
-
-    this.audio.onended = () => {
-      this.isPlaying = false;
-    };
+  hasPreview(track: any): boolean {
+    return !!(track?.preview_url || track?.preview);
   }
 
   async removeFavorite(event: Event, track: any) {
@@ -94,20 +88,20 @@ export class LibraryPage implements OnInit {
   // Helper para obtener la URL de la carátula del álbum
   getAlbumCover(track: any, size: 'small' | 'medium' | 'large' = 'medium'): string {
     const sizeMap = {
-      small: 'cover_small',
-      medium: 'cover_medium',
-      large: 'cover_big'
+      small: 2,
+      medium: 1,
+      large: 0
     };
 
-    // Intentar obtener la imagen del álbum
-    if (track.album) {
-      const coverUrl = track.album[sizeMap[size]] || track.album.cover_medium || track.album.cover;
-      if (coverUrl) return coverUrl;
+    if (track.album_art) return track.album_art;
+
+    if (track.album?.images) {
+      const idx = sizeMap[size];
+      const img = track.album.images[idx] || track.album.images[0];
+      if (img?.url) return img.url;
     }
 
-    // Fallback a la imagen directa del track si existe
     if (track.image) return track.image;
-    if (track.cover_medium) return track.cover_medium;
 
     // Imagen por defecto
     return 'assets/default-album.png';
@@ -127,14 +121,9 @@ export class LibraryPage implements OnInit {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
-  // Obtener progreso de reproducción
-  getProgress(): number {
-    if (!this.audio || !this.audio.duration) return 0;
-    return (this.audio.currentTime / this.audio.duration) * 100;
-  }
-
   // Manejar errores de carga de imagen
   onImageError(event: any) {
     event.target.src = 'assets/default-album.png';
   }
 }
+

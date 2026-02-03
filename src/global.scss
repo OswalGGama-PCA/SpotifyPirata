@@ -59,6 +59,11 @@
   }
 }
 
+// Asegurar que el contenido de páginas no se oculte bajo el reproductor flotante
+ion-content {
+  --padding-bottom: 80px;
+}
+
 // ----------------------------------------------------------------------------
 // THEME & BASE STYLES
 // ----------------------------------------------------------------------------
@@ -88,6 +93,7 @@ ion-item {
 
   .loading-wrapper {
     border-radius: var(--radius-xl);
+    -webkit-backdrop-filter: var(--glass-blur);
     backdrop-filter: var(--glass-blur);
     border: var(--glass-border);
     box-shadow: var(--shadow-xl);
